@@ -210,7 +210,7 @@ export default function AuthPage() {
                 <button
                   id="role-admin"
                   onClick={() => setRole('admin')}
-                  className={`${styles.roleCard} ${role === 'admin' ? styles.roleCardActiveAdmin : ''}`}
+                  className={`${styles.roleCard} ${styles.roleCardAdmin} ${role === 'admin' ? styles.roleCardActiveAdmin : ''}`}
                 >
                   <span className={styles.roleCardIcon}>⚙️</span>
                   <span className={styles.roleCardName}>Admin</span>
