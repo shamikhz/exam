@@ -1,0 +1,323 @@
+/* Admin Login Page Styles */
+.page {
+  min-height: 100vh;
+  background: var(--color-dominant);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.glowBg {
+  position: absolute;
+  top: -150px;
+  left: -150px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 2rem;
+}
+
+.backLink {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: color 0.2s;
+}
+
+.backLink:hover { color: var(--color-accent); }
+
+.themeBtn {
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.themeBtn:hover { transform: scale(1.1); }
+
+.container {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  gap: 3rem;
+  padding: 2rem;
+}
+
+/* ---- Brand Panel ---- */
+.brandPanel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.brandContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.brandLogo {
+  font-size: 3rem;
+}
+
+.brandTitle {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.15;
+  letter-spacing: -1px;
+}
+
+.brandSubtitle {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-width: 380px;
+}
+
+.brandFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.brandFeature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  width: fit-content;
+}
+
+.demoBox {
+  background: var(--color-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-width: 280px;
+}
+
+.demoLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.demoCode {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.08);
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
+}
+
+.demoFillBtn {
+  margin-top: 0.25rem;
+  background: none;
+  color: var(--color-accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.demoFillBtn:hover { opacity: 0.7; }
+
+/* ---- Form Panel ---- */
+.formPanel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formCard {
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.formIcon {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.formTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.formSubtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.inputBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputBlock label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.inputWrap {
+  position: relative;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-dominant);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.inputField:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.errorBox {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--color-danger);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.switchPanel {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.switchLink {
+  color: var(--color-accent);
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.switchLink:hover { opacity: 0.7; }
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .brandPanel { display: none; }
+  .container { padding: 1rem; }
+  .formCard { padding: 2rem 1.5rem; }
+}
