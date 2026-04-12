@@ -154,7 +154,7 @@ export default function AdminDashboard() {
       <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
         <div className={styles.sidebarBrand}>
           <span>⚙️</span>
-          <span className={styles.sidebarBrandText}>ExamPro Admin</span>
+          <span className={styles.sidebarBrandText}>ExamTop Admin</span>
         </div>
 
         <nav className={styles.sidebarNav}>

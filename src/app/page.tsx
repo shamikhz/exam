@@ -37,7 +37,7 @@ export default function LandingPage() {
       <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ''}`}>
         <div className={styles.navBrand}>
           <span className={styles.navLogo}>⚡</span>
-          <span className={styles.navTitle}>ExamPro</span>
+          <span className={styles.navTitle}>ExamTop</span>
         </div>
         <div className={styles.navActions}>
           <button
@@ -118,7 +118,7 @@ export default function LandingPage() {
       {/* ---- Features ---- */}
       <section className={styles.features} id="features">
         <div className={styles.sectionHeader}>
-          <span className={styles.sectionBadge}>Why ExamPro?</span>
+          <span className={styles.sectionBadge}>Why ExamTop?</span>
           <h2 className={styles.sectionTitle}>Everything you need to run great exams</h2>
           <p className={styles.sectionSubtitle}>
             Purpose-built tools for admins and students — from question creation to final results.

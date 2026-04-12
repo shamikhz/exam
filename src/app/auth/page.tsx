@@ -120,7 +120,7 @@ export default function AuthPage() {
       <div className={styles.topBar}>
         <Link href="/" className={styles.logo}>
           <span className={styles.logoIcon}>⚡</span>
-          <span className={styles.logoText}>ExamPro</span>
+          <span className={styles.logoText}>ExamTop</span>
         </Link>
         <button id="auth-theme-toggle" onClick={toggleTheme} className={styles.themeBtn} aria-label="Toggle theme">
           {theme === 'dark' ? '☀️' : '🌙'}
@@ -149,7 +149,7 @@ export default function AuthPage() {
               <div className={styles.testimonialAvatar}>👩‍💻</div>
               <div className={styles.testimonialBody}>
                 <p className={styles.testimonialText}>
-                  "ExamPro helped me pass my certification exam on the first try. The explanations are incredible!"
+                  "ExamTop helped me pass my certification exam on the first try. The explanations are incredible!"
                 </p>
                 <div className={styles.testimonialAuthor}>Sarah K. — Software Engineer</div>
               </div>

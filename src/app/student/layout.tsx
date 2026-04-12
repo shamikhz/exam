@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Student Login',
-  description: 'Student login portal for ExamPro. Browse topics, take timed exams, and track your learning progress.',
+  description: 'Student login portal for ExamTop. Browse topics, take timed exams, and track your learning progress.',
 };
 
 export default function StudentLayout({ children }: { children: React.ReactNode }) {

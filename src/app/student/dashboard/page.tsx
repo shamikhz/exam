@@ -146,7 +146,7 @@ export default function StudentDashboard() {
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <span className={styles.logo}>🎓</span>
-          <span className={styles.logoText}>ExamPro</span>
+          <span className={styles.logoText}>ExamTop</span>
           {view !== 'dashboard' && (
             <button onClick={() => setView('dashboard')} className={styles.backBtn}>
               ← Back
@@ -302,8 +302,8 @@ export default function StudentDashboard() {
         {view === 'exam' && examTopic && (
           <div className={styles.examView}>
             {/* Progress */}
-            <div className={styles.examProgress}>
-              <div className={styles.examProgressInfo}>
+            <div className={styles.ExamTopgress}>
+              <div className={styles.ExamTopgressInfo}>
                 <span>{examTopic.icon} {examTopic.name}</span>
                 <span>Question {currentQ + 1} of {examQuestions.length}</span>
               </div>

@@ -4,15 +4,15 @@ import { ThemeProvider } from '@/lib/ThemeProvider';
 
 export const metadata: Metadata = {
   title: {
-    default: 'ExamPro — Online Exam Platform',
-    template: '%s | ExamPro',
+    default: 'ExamTop — Online Exam Platform',
+    template: '%s | ExamTop',
   },
   description:
-    'ExamPro is a modern online examination platform for students and administrators. Manage topics, questions, and track performance with ease.',
+    'ExamTop is a modern online examination platform for students and administrators. Manage topics, questions, and track performance with ease.',
   keywords: ['online exam', 'quiz platform', 'student assessment', 'e-learning', 'exam management'],
-  authors: [{ name: 'ExamPro Team' }],
+  authors: [{ name: 'ExamTop Team' }],
   openGraph: {
-    title: 'ExamPro — Online Exam Platform',
+    title: 'ExamTop — Online Exam Platform',
     description: 'A modern online examination platform for students and administrators.',
     type: 'website',
   },
