@@ -50,6 +50,14 @@ export default function AuthPage() {
     resetForm();
   }
 
+  function selectRole(r: Role) {
+    setRole(r);
+    if (r === 'admin') {
+      setMode('login');
+      resetForm();
+    }
+  }
+
   function redirectByRole(auth: AuthState) {
     router.push(auth.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
   }
@@ -184,13 +192,15 @@ export default function AuthPage() {
               >
                 Sign In
               </button>
-              <button
-                id="tab-register"
-                onClick={() => switchMode('register')}
-                className={`${styles.modeTab} ${mode === 'register' ? styles.modeTabActive : ''}`}
-              >
-                Create Account
-              </button>
+              {role === 'student' && (
+                <button
+                  id="tab-register"
+                  onClick={() => switchMode('register')}
+                  className={`${styles.modeTab} ${mode === 'register' ? styles.modeTabActive : ''}`}
+                >
+                  Create Account
+                </button>
+              )}
             </div>
 
             {/* Role selector cards */}
@@ -199,7 +209,7 @@ export default function AuthPage() {
               <div className={styles.roleCards}>
                 <button
                   id="role-student"
-                  onClick={() => setRole('student')}
+                  onClick={() => selectRole('student')}
                   className={`${styles.roleCard} ${role === 'student' ? styles.roleCardActive : ''}`}
                 >
                   <span className={styles.roleCardIcon}>🎓</span>
@@ -209,7 +219,7 @@ export default function AuthPage() {
                 </button>
                 <button
                   id="role-admin"
-                  onClick={() => setRole('admin')}
+                  onClick={() => selectRole('admin')}
                   className={`${styles.roleCard} ${styles.roleCardAdmin} ${role === 'admin' ? styles.roleCardActiveAdmin : ''}`}
                 >
                   <span className={styles.roleCardIcon}>⚙️</span>
@@ -220,32 +230,36 @@ export default function AuthPage() {
               </div>
             </div>
 
-            {/* Social sign-in options */}
-            <div className={styles.socialSection}>
-              {SOCIAL_OPTIONS.map((s) => (
-                <button
-                  key={s.id}
-                  id={`social-${s.id}`}
-                  onClick={() => handleSocial(s.id)}
-                  className={styles.socialBtn}
-                  disabled={socialLoading !== null}
-                >
-                  {socialLoading === s.id ? (
-                    <span className={styles.spinnerSm} />
-                  ) : (
-                    <span className={styles.socialIcon}>{s.icon}</span>
-                  )}
-                  <span>{s.label}</span>
-                </button>
-              ))}
-            </div>
+            {/* Social sign-in options — hidden for admin */}
+            {role === 'student' && (
+              <div className={styles.socialSection}>
+                {SOCIAL_OPTIONS.map((s) => (
+                  <button
+                    key={s.id}
+                    id={`social-${s.id}`}
+                    onClick={() => handleSocial(s.id)}
+                    className={styles.socialBtn}
+                    disabled={socialLoading !== null}
+                  >
+                    {socialLoading === s.id ? (
+                      <span className={styles.spinnerSm} />
+                    ) : (
+                      <span className={styles.socialIcon}>{s.icon}</span>
+                    )}
+                    <span>{s.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
-            {/* Divider */}
-            <div className={styles.divider}>
-              <span className={styles.dividerLine} />
-              <span className={styles.dividerText}>or {mode === 'login' ? 'sign in' : 'sign up'} with email</span>
-              <span className={styles.dividerLine} />
-            </div>
+            {/* Divider — hidden for admin */}
+            {role === 'student' && (
+              <div className={styles.divider}>
+                <span className={styles.dividerLine} />
+                <span className={styles.dividerText}>or {mode === 'login' ? 'sign in' : 'sign up'} with email</span>
+                <span className={styles.dividerLine} />
+              </div>
+            )}
 
             {/* Form */}
             <form onSubmit={handleSubmit} id="auth-form" className={styles.form} noValidate>
@@ -357,17 +371,19 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Switch mode */}
-            <p className={styles.switchText}>
-              {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
-              <button
-                id="switch-mode"
-                onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}
-                className={styles.switchBtn}
-              >
-                {mode === 'login' ? 'Sign up free' : 'Sign in'}
-              </button>
-            </p>
+            {/* Switch mode — hidden for admin */}
+            {role === 'student' && (
+              <p className={styles.switchText}>
+                {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
+                <button
+                  id="switch-mode"
+                  onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}
+                  className={styles.switchBtn}
+                >
+                  {mode === 'login' ? 'Sign up free' : 'Sign in'}
+                </button>
+              </p>
+            )}
           </div>
         </div>
       </main>
