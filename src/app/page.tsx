@@ -172,18 +172,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ---- Footer ---- */}
-      <footer className={styles.footer}>
-        <div className={styles.footerBrand}>
-          <span className={styles.navLogo}>⚡</span>
-          <span className={styles.navTitle}>ExamPro</span>
-        </div>
-        <p className={styles.footerText}>© {new Date().getFullYear()} ExamPro. Built for learners, by learners.</p>
-        <div className={styles.footerLinks}>
-          <Link href="/auth">Sign In</Link>
-          <Link href="/auth">Register</Link>
-        </div>
-      </footer>
     </div>
   );
 }
