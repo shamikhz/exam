@@ -13,7 +13,6 @@ type Role = 'student' | 'admin';
 const SOCIAL_OPTIONS = [
   { id: 'google', label: 'Continue with Google', icon: '🌐', color: '#4285f4' },
   { id: 'github', label: 'Continue with GitHub', icon: '🐙', color: '#333' },
-  { id: 'microsoft', label: 'Continue with Microsoft', icon: '🪟', color: '#00a4ef' },
 ];
 
 export default function AuthPage() {
@@ -252,14 +251,7 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Divider — hidden for admin */}
-            {role === 'student' && (
-              <div className={styles.divider}>
-                <span className={styles.dividerLine} />
-                <span className={styles.dividerText}>or {mode === 'login' ? 'sign in' : 'sign up'} with email</span>
-                <span className={styles.dividerLine} />
-              </div>
-            )}
+
 
             {/* Form */}
             <form onSubmit={handleSubmit} id="auth-form" className={styles.form} noValidate>

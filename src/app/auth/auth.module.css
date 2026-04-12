@@ -371,25 +371,7 @@
 .socialBtn:disabled { opacity: 0.6; cursor: not-allowed; }
 .socialIcon { font-size: 1.1rem; }
 
-/* ---- Divider ---- */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
 
-.dividerLine {
-  flex: 1;
-  height: 1px;
-  background: var(--color-border);
-}
-
-.dividerText {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  font-weight: 500;
-}
 
 /* ---- Form ---- */
 .form {
