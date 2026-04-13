@@ -44,6 +44,7 @@ export default function AdminDashboard() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'topic' | 'question'; id: string } | null>(null);
+  const [topicError, setTopicError] = useState('');
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -74,14 +75,28 @@ export default function AdminDashboard() {
       setEditingTopic(null);
       setTopicForm({ name: '', description: '', icon: '📚', difficulty: 'Easy' });
     }
+    setTopicError('');
     setShowTopicForm(true);
   }
 
   function handleTopicSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setTopicError('');
+
+    // Duplicate check
+    const isDuplicate = topics.some(t => 
+      t.name.toLowerCase() === topicForm.name.trim().toLowerCase() && 
+      t.id !== editingTopic?.id
+    );
+
+    if (isDuplicate) {
+      setTopicError(`A topic named "${topicForm.name.trim()}" already exists. Please choose a unique name.`);
+      return;
+    }
+
     const topic: Topic = {
       id: editingTopic?.id || generateId('topic'),
-      name: topicForm.name,
+      name: topicForm.name.trim(),
       description: topicForm.description,
       icon: topicForm.icon,
       difficulty: topicForm.difficulty,
@@ -493,6 +508,13 @@ export default function AdminDashboard() {
               <h3>{editingTopic ? 'Edit Topic' : 'New Topic'}</h3>
               <button onClick={() => setShowTopicForm(false)} className={styles.modalClose}>✕</button>
             </div>
+            
+            {topicError && (
+              <div className={styles.toastError} style={{ margin: '1rem 1.5rem 0', borderRadius: '10px' }}>
+                ⚠️ {topicError}
+              </div>
+            )}
+
             <form onSubmit={handleTopicSubmit} id="topic-form" className={styles.modalForm}>
               <div className={styles.inputBlock}>
                 <label htmlFor="topic-name">Topic Name</label>
