@@ -7,7 +7,7 @@ import {
   getCurrentUser, logout,
   getTopics, saveTopic, deleteTopic,
   getQuestions, saveQuestion, deleteQuestion, getQuestionsByTopic,
-  getResults, getUsers,
+  getResults, getUsers, deleteUser,
   generateId,
   type Topic, type Question,
 } from '@/lib/storage';
@@ -43,7 +43,7 @@ export default function AdminDashboard() {
   });
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'topic' | 'question'; id: string } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'topic' | 'question' | 'student'; id: string } | null>(null);
   const [topicError, setTopicError] = useState('');
 
   useEffect(() => {
@@ -109,6 +109,12 @@ export default function AdminDashboard() {
 
   function handleDeleteTopic(id: string) {
     deleteTopic(id);
+    setDeleteConfirm(null);
+    refreshData();
+  }
+
+  function handleDeleteStudent(id: string) {
+    deleteUser(id);
     setDeleteConfirm(null);
     refreshData();
   }
@@ -467,6 +473,7 @@ export default function AdminDashboard() {
                   <span>Email</span>
                   <span>Exams Taken</span>
                   <span>Best Score</span>
+                  <span>Actions</span>
                 </div>
                 {users.filter((u) => u.role === 'student').map((u) => {
                   const studentResults = results.filter((r) => r.studentId === u.id);
@@ -485,6 +492,9 @@ export default function AdminDashboard() {
                         {bestScore !== null
                           ? <span style={{ color: bestScore >= 60 ? '#10b981' : '#ef4444', fontWeight: 700 }}>{bestScore}%</span>
                           : <span className={styles.noData}>—</span>}
+                      </span>
+                      <span className={styles.tableCell}>
+                        <button onClick={() => setDeleteConfirm({ type: 'student', id: u.id })} className={styles.deleteBtn}>🗑️</button>
                       </span>
                     </div>
                   );
@@ -623,12 +633,17 @@ export default function AdminDashboard() {
             <p className={styles.deleteText}>
               Are you sure you want to delete this {deleteConfirm.type}?
               {deleteConfirm.type === 'topic' && ' All associated questions will also be deleted.'}
+              {deleteConfirm.type === 'student' && ' All associated results will also be deleted.'}
             </p>
             <div className={styles.modalBtns}>
               <button onClick={() => setDeleteConfirm(null)} className={styles.cancelBtn}>Cancel</button>
               <button
                 id="confirm-delete-btn"
-                onClick={() => deleteConfirm.type === 'topic' ? handleDeleteTopic(deleteConfirm.id) : handleDeleteQuestion(deleteConfirm.id)}
+                onClick={() => {
+                  if (deleteConfirm.type === 'topic') handleDeleteTopic(deleteConfirm.id);
+                  else if (deleteConfirm.type === 'question') handleDeleteQuestion(deleteConfirm.id);
+                  else if (deleteConfirm.type === 'student') handleDeleteStudent(deleteConfirm.id);
+                }}
                 className={styles.dangerBtn}
               >
                 Delete
