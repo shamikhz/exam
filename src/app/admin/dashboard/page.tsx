@@ -26,6 +26,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<ReturnType<typeof getUsers>>([]);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [topicSearch, setTopicSearch] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Topic form state
@@ -321,14 +322,31 @@ export default function AdminDashboard() {
           {activeTab === 'topics' && (
             <div className={styles.tabContent}>
               <div className={styles.tabHeader}>
-                <h3>Manage Topics</h3>
+                <div className={styles.tabHeaderLeft}>
+                  <h3>Manage Topics</h3>
+                  <div className={styles.searchBox}>
+                    <span className={styles.searchIcon}>🔍</span>
+                    <input 
+                      type="text" 
+                      placeholder="Search topics..." 
+                      value={topicSearch}
+                      onChange={(e) => setTopicSearch(e.target.value)}
+                      className={styles.searchInput}
+                    />
+                  </div>
+                </div>
                 <button id="add-topic-btn" onClick={() => openTopicForm()} className={styles.addBtn}>
                   + Add Topic
                 </button>
               </div>
 
               <div className={styles.topicsGrid}>
-                {topics.map((t) => (
+                {topics
+                  .filter(t => 
+                    t.name.toLowerCase().includes(topicSearch.toLowerCase()) || 
+                    t.description.toLowerCase().includes(topicSearch.toLowerCase())
+                  )
+                  .map((t) => (
                   <div key={t.id} className={styles.topicCard}>
                     <div className={styles.topicCardHeader}>
                       <span className={styles.topicCardIcon}>{t.icon}</span>
@@ -352,6 +370,16 @@ export default function AdminDashboard() {
                     <div className={styles.emptyIcon}>📚</div>
                     <p>No topics yet. Create your first topic!</p>
                     <button onClick={() => openTopicForm()} className={styles.addBtn}>+ Add Topic</button>
+                  </div>
+                )}
+                {topics.length > 0 && topics.filter(t => 
+                    t.name.toLowerCase().includes(topicSearch.toLowerCase()) || 
+                    t.description.toLowerCase().includes(topicSearch.toLowerCase())
+                  ).length === 0 && (
+                  <div className={styles.emptyState}>
+                    <div className={styles.emptyIcon}>🔍</div>
+                    <p>No topics match "{topicSearch}"</p>
+                    <button onClick={() => setTopicSearch('')} className={styles.clearBtn}>Clear Search</button>
                   </div>
                 )}
               </div>
