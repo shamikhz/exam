@@ -163,9 +163,6 @@ export default function StudentDashboard() {
               ⏱ {formatTime(timeLeft)}
             </div>
           )}
-          <button id="student-theme-toggle" onClick={toggleTheme} className={styles.themeBtn} aria-label="Toggle theme">
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
           
           <div className={styles.avatarGroup}>
             <button 

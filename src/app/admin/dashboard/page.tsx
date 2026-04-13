@@ -204,9 +204,6 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className={styles.topbarRight}>
-            <button id="dashboard-theme-toggle" onClick={toggleTheme} className={styles.themeBtn} aria-label="Toggle theme">
-              {theme === 'dark' ? '☀️' : '🌙'}
-            </button>
             <div className={styles.avatarGroup}>
               <button 
                 id="admin-avatar-btn"
