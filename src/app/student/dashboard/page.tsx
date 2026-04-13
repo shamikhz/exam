@@ -26,6 +26,7 @@ export default function StudentDashboard() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [myResults, setMyResults] = useState<ExamResult[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Exam state
   const [examTopic, setExamTopic] = useState<Topic | null>(null);
@@ -249,9 +250,27 @@ export default function StudentDashboard() {
 
             {/* Topics grid */}
             <section>
-              <h2 className={styles.sectionTitle}>Available Topics</h2>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>Available Topics</h2>
+                <div className={styles.searchBox}>
+                  <span className={styles.searchIcon}>🔍</span>
+                  <input 
+                    type="text" 
+                    placeholder="Search topics..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={styles.searchInput}
+                  />
+                </div>
+              </div>
+              
               <div className={styles.topicsGrid}>
-                {topics.map((t) => {
+                {topics
+                  .filter(t => 
+                    t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    t.description.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((t) => {
                   const topicResults = myResults.filter((r) => r.topicId === t.id);
                   const lastResult = topicResults[topicResults.length - 1];
                   const lastPercent = lastResult ? Math.round((lastResult.score / lastResult.totalPoints) * 100) : null;
@@ -288,6 +307,16 @@ export default function StudentDashboard() {
                   <div className={styles.emptyState}>
                     <span style={{ fontSize: '3rem' }}>📚</span>
                     <p>No topics available yet. Ask your admin to create some!</p>
+                  </div>
+                )}
+                {topics.length > 0 && topics.filter(t => 
+                    t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    t.description.toLowerCase().includes(searchQuery.toLowerCase())
+                  ).length === 0 && (
+                  <div className={styles.emptyState}>
+                    <span style={{ fontSize: '3rem' }}>🔍</span>
+                    <p>No topics match "{searchQuery}"</p>
+                    <button onClick={() => setSearchQuery('')} className={styles.clearBtn}>Clear Search</button>
                   </div>
                 )}
               </div>
