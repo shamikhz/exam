@@ -631,9 +631,18 @@ export default function AdminDashboard() {
             <div className={styles.deleteIcon}>🗑️</div>
             <h3 className={styles.deleteTitle}>Confirm Delete</h3>
             <p className={styles.deleteText}>
-              Are you sure you want to delete this {deleteConfirm.type}?
+              {deleteConfirm.type === 'student' ? (
+                <>Are you sure you want to delete student <strong>{users.find(u => u.id === deleteConfirm.id)?.name}</strong>?</>
+              ) : deleteConfirm.type === 'topic' ? (
+                <>Are you sure you want to delete topic <strong>{topics.find(t => t.id === deleteConfirm.id)?.name}</strong>?</>
+              ) : (
+                <>Are you sure you want to delete this {deleteConfirm.type}?</>
+              )}
+              <br />
               {deleteConfirm.type === 'topic' && ' All associated questions will also be deleted.'}
               {deleteConfirm.type === 'student' && ' All associated results will also be deleted.'}
+              <br />
+              This action cannot be undone.
             </p>
             <div className={styles.modalBtns}>
               <button onClick={() => setDeleteConfirm(null)} className={styles.cancelBtn}>Cancel</button>
