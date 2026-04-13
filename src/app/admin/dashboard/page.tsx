@@ -26,7 +26,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<ReturnType<typeof getUsers>>([]);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [topicSearch, setTopicSearch] = useState('');
+  const [selectedTopicView, setSelectedTopicView] = useState('all');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Topic form state
@@ -324,16 +324,15 @@ export default function AdminDashboard() {
               <div className={styles.tabHeader}>
                 <div className={styles.tabHeaderLeft}>
                   <h3>Manage Topics</h3>
-                  <div className={styles.searchBox}>
-                    <span className={styles.searchIcon}>🔍</span>
-                    <input 
-                      type="text" 
-                      placeholder="Search topics..." 
-                      value={topicSearch}
-                      onChange={(e) => setTopicSearch(e.target.value)}
-                      className={styles.searchInput}
-                    />
-                  </div>
+                  <select
+                    id="topics-tab-filter"
+                    value={selectedTopicView}
+                    onChange={(e) => setSelectedTopicView(e.target.value)}
+                    className={styles.filterSelect}
+                  >
+                    <option value="all">All Topics</option>
+                    {topics.map((t) => <option key={t.id} value={t.id}>{t.icon} {t.name}</option>)}
+                  </select>
                 </div>
                 <button id="add-topic-btn" onClick={() => openTopicForm()} className={styles.addBtn}>
                   + Add Topic
@@ -342,10 +341,7 @@ export default function AdminDashboard() {
 
               <div className={styles.topicsGrid}>
                 {topics
-                  .filter(t => 
-                    t.name.toLowerCase().includes(topicSearch.toLowerCase()) || 
-                    t.description.toLowerCase().includes(topicSearch.toLowerCase())
-                  )
+                  .filter(t => selectedTopicView === 'all' || t.id === selectedTopicView)
                   .map((t) => (
                   <div key={t.id} className={styles.topicCard}>
                     <div className={styles.topicCardHeader}>
@@ -372,14 +368,12 @@ export default function AdminDashboard() {
                     <button onClick={() => openTopicForm()} className={styles.addBtn}>+ Add Topic</button>
                   </div>
                 )}
-                {topics.length > 0 && topics.filter(t => 
-                    t.name.toLowerCase().includes(topicSearch.toLowerCase()) || 
-                    t.description.toLowerCase().includes(topicSearch.toLowerCase())
-                  ).length === 0 && (
+                {topics.length > 0 && selectedTopicView !== 'all' && 
+                  topics.filter(t => t.id === selectedTopicView).length === 0 && (
                   <div className={styles.emptyState}>
                     <div className={styles.emptyIcon}>🔍</div>
-                    <p>No topics match "{topicSearch}"</p>
-                    <button onClick={() => setTopicSearch('')} className={styles.clearBtn}>Clear Search</button>
+                    <p>Topic not found.</p>
+                    <button onClick={() => setSelectedTopicView('all')} className={styles.clearBtn}>Show All</button>
                   </div>
                 )}
               </div>
