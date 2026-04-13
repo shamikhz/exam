@@ -96,6 +96,104 @@
 
 .themeBtn:hover { transform: scale(1.1); }
 
+.avatarGroup {
+  position: relative;
+}
+
+.avatarBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.avatarBtn:hover {
+  transform: scale(1.05);
+}
+
+.userDropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 240px;
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  z-index: 100;
+  animation: dropdownFade 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdownInfo {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 0.5rem;
+}
+
+.dropdownName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownEmail {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+}
+
+.dropdownLink:hover {
+  background: var(--color-dominant);
+  color: var(--color-accent);
+}
+
+.dropdownLogout {
+  color: var(--color-danger);
+}
+
+.dropdownLogout:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
+}
+
+.dropdownIcon {
+  font-size: 1.1rem;
+}
+
 .avatar {
   width: 38px;
   height: 38px;
@@ -109,19 +207,7 @@
 }
 
 .logoutBtn {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--color-danger);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 8px;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.logoutBtn:hover {
-  background: rgba(239, 68, 68, 0.2);
+  display: none; /* Hide old logout button */
 }
 
 /* ---- Main ---- */

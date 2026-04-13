@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   getCurrentUser, logout,
   getTopics, getQuestionsByTopic, saveResult,
@@ -20,9 +21,11 @@ export default function StudentDashboard() {
 
   const [view, setView] = useState<View>('dashboard');
   const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [userId, setUserId] = useState('');
   const [topics, setTopics] = useState<Topic[]>([]);
   const [myResults, setMyResults] = useState<ExamResult[]>([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Exam state
   const [examTopic, setExamTopic] = useState<Topic | null>(null);
@@ -42,6 +45,7 @@ export default function StudentDashboard() {
     const user = getCurrentUser();
     if (!user || user.role !== 'student') { router.replace('/auth'); return; }
     setUserName(user.name);
+    setUserEmail(user.email);
     setUserId(user.userId);
     refreshData(user.userId);
   }, [router]);
@@ -162,8 +166,41 @@ export default function StudentDashboard() {
           <button id="student-theme-toggle" onClick={toggleTheme} className={styles.themeBtn} aria-label="Toggle theme">
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
-          <div className={styles.avatar}>{userName.charAt(0).toUpperCase()}</div>
-          <button id="student-logout" onClick={handleLogout} className={styles.logoutBtn}>Sign Out</button>
+          
+          <div className={styles.avatarGroup}>
+            <button 
+              id="student-avatar-btn"
+              className={styles.avatarBtn} 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="User menu"
+            >
+              <div className={styles.avatar}>{userName.charAt(0).toUpperCase()}</div>
+            </button>
+
+            {isMenuOpen && (
+              <>
+                <div className={styles.overlay} style={{ background: 'transparent', zIndex: 90 }} onClick={() => setIsMenuOpen(false)} />
+                <div className={styles.userDropdown}>
+                  <div className={styles.dropdownInfo}>
+                    <div className={styles.dropdownName}>{userName}</div>
+                    <div className={styles.dropdownEmail}>{userEmail}</div>
+                  </div>
+                  <Link href="/profile" className={styles.dropdownLink}>
+                    <span className={styles.dropdownIcon}>👤</span>
+                    Profile Settings
+                  </Link>
+                  <button onClick={toggleTheme} className={styles.dropdownLink}>
+                    <span className={styles.dropdownIcon}>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                    {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                  </button>
+                  <button onClick={handleLogout} className={`${styles.dropdownLink} ${styles.dropdownLogout}`}>
+                    <span className={styles.dropdownIcon}>🚪</span>
+                    Sign Out
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 

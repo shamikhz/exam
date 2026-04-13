@@ -25,6 +25,8 @@ export default function AdminDashboard() {
   const [results, setResults] = useState<ReturnType<typeof getResults>>([]);
   const [users, setUsers] = useState<ReturnType<typeof getUsers>>([]);
   const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Topic form state
   const [showTopicForm, setShowTopicForm] = useState(false);
@@ -46,6 +48,7 @@ export default function AdminDashboard() {
     const user = getCurrentUser();
     if (!user || user.role !== 'admin') { router.replace('/auth'); return; }
     setUserName(user.name);
+    setUserEmail(user.email);
     refreshData();
   }, [router]);
 
@@ -204,7 +207,40 @@ export default function AdminDashboard() {
             <button id="dashboard-theme-toggle" onClick={toggleTheme} className={styles.themeBtn} aria-label="Toggle theme">
               {theme === 'dark' ? '☀️' : '🌙'}
             </button>
-            <div className={styles.avatar}>{userName.charAt(0).toUpperCase()}</div>
+            <div className={styles.avatarGroup}>
+              <button 
+                id="admin-avatar-btn"
+                className={styles.avatarBtn} 
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                aria-label="User menu"
+              >
+                <div className={styles.avatar}>{userName.charAt(0).toUpperCase()}</div>
+              </button>
+
+              {isMenuOpen && (
+                <>
+                  <div className={styles.overlay} style={{ background: 'transparent' }} onClick={() => setIsMenuOpen(false)} />
+                  <div className={styles.userDropdown}>
+                    <div className={styles.dropdownInfo}>
+                      <div className={styles.dropdownName}>{userName}</div>
+                      <div className={styles.dropdownEmail}>{userEmail}</div>
+                    </div>
+                    <Link href="/profile" className={styles.dropdownLink}>
+                      <span className={styles.dropdownIcon}>👤</span>
+                      Profile Settings
+                    </Link>
+                    <button onClick={toggleTheme} className={styles.dropdownLink}>
+                      <span className={styles.dropdownIcon}>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                      {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                    </button>
+                    <button onClick={handleLogout} className={`${styles.dropdownLink} ${styles.dropdownLogout}`}>
+                      <span className={styles.dropdownIcon}>🚪</span>
+                      Sign Out
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </header>
 

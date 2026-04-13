@@ -9,6 +9,9 @@ export interface User {
   password: string;
   role: 'admin' | 'student';
   createdAt: string;
+  bio?: string;
+  location?: string;
+  phone?: string;
 }
 
 export interface Topic {
@@ -316,6 +319,28 @@ export function register(
 
 export function logout(): void {
   localStorage.removeItem(KEYS.AUTH);
+}
+
+export function updateUserProfile(data: Partial<User>): AuthState | null {
+  const auth = getCurrentUser();
+  if (!auth) return null;
+
+  const users = getUsers();
+  const idx = users.findIndex((u) => u.id === auth.userId);
+  if (idx === -1) return null;
+
+  const updatedUser = { ...users[idx], ...data };
+  users[idx] = updatedUser;
+  localStorage.setItem(KEYS.USERS, JSON.stringify(users));
+
+  // Sync auth state
+  const updatedAuth: AuthState = {
+    ...auth,
+    name: updatedUser.name,
+    email: updatedUser.email,
+  };
+  localStorage.setItem(KEYS.AUTH, JSON.stringify(updatedAuth));
+  return updatedAuth;
 }
 
 export function getCurrentUser(): AuthState | null {
