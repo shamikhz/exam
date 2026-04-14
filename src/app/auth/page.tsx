@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loginAny, register, getCurrentUser, seedDefaultData, type AuthState } from '@/lib/storage';
+import { loginAny, register, getCurrentUser, seedDefaultData, getUsers, type AuthState } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
 import styles from './auth.module.css';
 
@@ -75,9 +75,18 @@ export default function AuthPage() {
     await new Promise((r) => setTimeout(r, 700));
 
     if (mode === 'login') {
+      const allUsers = getUsers();
+      const userExists = allUsers.some(u => u.email === email.trim().toLowerCase());
+      
+      if (!userExists) {
+        setError('No account found with this email. Please check for typos or create a new account.');
+        setLoading(false);
+        return;
+      }
+
       const result = loginAny(email.trim().toLowerCase(), password);
       if (!result) {
-        setError('Invalid email or password. Please try again.');
+        setError('Incorrect password. Please try again.');
         setLoading(false);
         return;
       }
