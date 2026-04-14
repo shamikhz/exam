@@ -274,6 +274,11 @@ export function saveResult(result: ExamResult): void {
   localStorage.setItem(KEYS.RESULTS, JSON.stringify(results));
 }
 
+export function deleteResult(id: string): void {
+  const results = getResults().filter((r) => r.id !== id);
+  localStorage.setItem(KEYS.RESULTS, JSON.stringify(results));
+}
+
 // ---- Auth ----
 export function login(role: 'admin' | 'student', email: string, password: string): AuthState | null {
   const users = getUsers();

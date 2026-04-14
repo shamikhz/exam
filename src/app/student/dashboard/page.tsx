@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   getCurrentUser, logout,
   getTopics, getQuestionsByTopic, saveResult,
-  getResultsByStudent, getQuestions,
+  getResultsByStudent, getQuestions, deleteResult,
   generateId,
   type Topic, type Question, type ExamResult,
 } from '@/lib/storage';
@@ -28,6 +28,8 @@ export default function StudentDashboard() {
   const [myResults, setMyResults] = useState<ExamResult[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [resultsPage, setResultsPage] = useState(1);
+  const RESULTS_PER_PAGE = 5;
 
   // Exam state
   const [examTopic, setExamTopic] = useState<Topic | null>(null);
@@ -127,6 +129,17 @@ export default function StudentDashboard() {
     const qs = getQuestionsByTopic(result.topicId);
     const topic = topics.find((t) => t.id === result.topicId) || null;
     if (topic) openReview(result, qs, topic);
+  }
+
+  function handleDeleteResult(id: string) {
+    if (window.confirm('Are you sure you want to delete this result? This cannot be undone.')) {
+      deleteResult(id);
+      refreshData(userId);
+      // Adjust page if current page becomes empty
+      const totalAfter = myResults.length - 1;
+      const maxPages = Math.ceil(totalAfter / RESULTS_PER_PAGE) || 1;
+      if (resultsPage > maxPages) setResultsPage(maxPages);
+    }
   }
 
   // Format time
@@ -335,38 +348,81 @@ export default function StudentDashboard() {
 
             {/* Recent results */}
             {myResults.length > 0 && (
-              <section>
-                <h2 className={styles.sectionTitle}>Recent Results</h2>
-                <div className={styles.resultsList}>
-                  {[...myResults].reverse().slice(0, 5).map((r) => {
-                    const topic = topics.find((t) => t.id === r.topicId);
-                    const pct = Math.round((r.score / r.totalPoints) * 100);
-                    return (
-                      <div key={r.id} className={styles.resultCard}>
-                        <div className={styles.resultLeft}>
-                          <span className={styles.resultIcon}>{topic?.icon || '📋'}</span>
-                          <div>
-                            <div className={styles.resultTopic}>{topic?.name || 'Unknown Topic'}</div>
-                            <div className={styles.resultDate}>{new Date(r.completedAt).toLocaleDateString()}</div>
-                          </div>
-                        </div>
-                        <div className={styles.resultRight}>
-                          <div className={styles.resultScore} style={{ color: pct >= 60 ? '#10b981' : '#ef4444' }}>
-                            {pct}%
-                          </div>
-                          <div className={styles.resultPts}>{r.score}/{r.totalPoints} pts</div>
-                          <button
-                            id={`review-result-${r.id}`}
-                            onClick={() => openResultReview(r)}
-                            className={styles.reviewBtn}
-                          >
-                            Review
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
+              <section className={styles.resultsSection}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>Recent Results</h2>
+                  <div className={styles.resultsCount}>
+                    Total: {myResults.length} records
+                  </div>
                 </div>
+                
+                <div className={styles.resultsList}>
+                  {[...myResults]
+                    .reverse()
+                    .slice((resultsPage - 1) * RESULTS_PER_PAGE, resultsPage * RESULTS_PER_PAGE)
+                    .map((r) => {
+                      const topic = topics.find((t) => t.id === r.topicId);
+                      const pct = Math.round((r.score / r.totalPoints) * 100);
+                      return (
+                        <div key={r.id} className={styles.resultCard}>
+                          <div className={styles.resultLeft}>
+                            <span className={styles.resultIcon}>{topic?.icon || '📋'}</span>
+                            <div>
+                              <div className={styles.resultTopic}>{topic?.name || 'Unknown Topic'}</div>
+                              <div className={styles.resultDate}>{new Date(r.completedAt).toLocaleDateString()} at {new Date(r.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                            </div>
+                          </div>
+                          <div className={styles.resultRight}>
+                            <div className={styles.scoreInfo}>
+                              <div className={styles.resultScore} style={{ color: pct >= 60 ? '#10b981' : '#ef4444' }}>
+                                {pct}%
+                              </div>
+                              <div className={styles.resultPts}>{r.score}/{r.totalPoints} pts</div>
+                            </div>
+                            <div className={styles.resultActions}>
+                              <button
+                                id={`review-result-${r.id}`}
+                                onClick={() => openResultReview(r)}
+                                className={styles.reviewBtn}
+                                title="Review Answers"
+                              >
+                                Review
+                              </button>
+                              <button
+                                onClick={() => handleDeleteResult(r.id)}
+                                className={styles.deleteResultBtn}
+                                title="Delete Result"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+
+                {myResults.length > RESULTS_PER_PAGE && (
+                  <div className={styles.pagination}>
+                    <button 
+                      onClick={() => setResultsPage(p => Math.max(1, p - 1))}
+                      disabled={resultsPage === 1}
+                      className={styles.pageBtn}
+                    >
+                      ← Previous
+                    </button>
+                    <span className={styles.pageInfo}>
+                      Page {resultsPage} of {Math.ceil(myResults.length / RESULTS_PER_PAGE)}
+                    </span>
+                    <button 
+                      onClick={() => setResultsPage(p => Math.min(Math.ceil(myResults.length / RESULTS_PER_PAGE), p + 1))}
+                      disabled={resultsPage === Math.ceil(myResults.length / RESULTS_PER_PAGE)}
+                      className={styles.pageBtn}
+                    >
+                      Next →
+                    </button>
+                  </div>
+                )}
               </section>
             )}
           </div>
