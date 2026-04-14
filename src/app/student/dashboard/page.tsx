@@ -137,12 +137,13 @@ export default function StudentDashboard() {
   }
 
   // Stats
+  const validResults = myResults.filter(r => r.totalPoints > 0);
   const totalExams = myResults.length;
-  const avgPercent = totalExams > 0
-    ? Math.round(myResults.reduce((acc, r) => acc + (r.score / r.totalPoints) * 100, 0) / totalExams)
+  const avgPercent = validResults.length > 0
+    ? Math.round(validResults.reduce((acc, r) => acc + (r.score / r.totalPoints) * 100, 0) / validResults.length)
     : 0;
-  const bestPercent = totalExams > 0
-    ? Math.round(Math.max(...myResults.map((r) => (r.score / r.totalPoints) * 100)))
+  const bestPercent = validResults.length > 0
+    ? Math.round(Math.max(...validResults.map((r) => (r.score / r.totalPoints) * 100)))
     : 0;
 
   const difficultyColors: Record<string, string> = { Easy: '#10b981', Medium: '#f59e0b', Hard: '#ef4444' };
@@ -281,7 +282,9 @@ export default function StudentDashboard() {
                   .map((t) => {
                   const topicResults = myResults.filter((r) => r.topicId === t.id);
                   const lastResult = topicResults[topicResults.length - 1];
-                  const lastPercent = lastResult ? Math.round((lastResult.score / lastResult.totalPoints) * 100) : null;
+                  const lastPercent = (lastResult && lastResult.totalPoints > 0) 
+                    ? Math.round((lastResult.score / lastResult.totalPoints) * 100) 
+                    : null;
                   return (
                     <div key={t.id} className={styles.topicCard}>
                       <div className={styles.topicCardTop}>
