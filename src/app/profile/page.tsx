@@ -22,6 +22,7 @@ export default function ProfilePage() {
     location: '',
     bio: '',
   });
+  const [avatar, setAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     const auth = getCurrentUser();
@@ -43,9 +44,26 @@ export default function ProfilePage() {
         location: user.location || '',
         bio: user.bio || '',
       });
+      setAvatar(user.avatar || null);
     }
     setLoading(false);
   }, [router]);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image is too large. Please select a file under 2MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatar(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -60,6 +78,7 @@ export default function ProfilePage() {
       phone: formData.phone,
       location: formData.location,
       bio: formData.bio,
+      avatar: avatar || undefined,
     });
 
     if (updated) {
@@ -89,7 +108,22 @@ export default function ProfilePage() {
         <main className={styles.card}>
           <div className={styles.profileHeader}>
             <div className={styles.avatarLarge}>
-              {userName.charAt(0).toUpperCase()}
+              {avatar ? (
+                <img src={avatar} alt="Avatar" className={styles.avatarImg} />
+              ) : (
+                userName.charAt(0).toUpperCase()
+              )}
+              <label htmlFor="avatar-upload" className={styles.editBtn} title="Change Avatar">
+                <span className={styles.editIcon}>✏️</span>
+              </label>
+              <input 
+                id="avatar-upload" 
+                type="file" 
+                accept="image/*" 
+                onChange={handleFileChange} 
+                className={styles.hiddenInput} 
+                style={{ display: 'none' }}
+              />
             </div>
             <div className={styles.profileInfo}>
               <h2 className={styles.profileName}>{userName}</h2>

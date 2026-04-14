@@ -26,6 +26,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<ReturnType<typeof getUsers>>([]);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [selectedTopicView, setSelectedTopicView] = useState('all');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -51,6 +52,7 @@ export default function AdminDashboard() {
     if (!user || user.role !== 'admin') { router.replace('/auth'); return; }
     setUserName(user.name);
     setUserEmail(user.email);
+    setUserAvatar(user.avatar || null);
     refreshData();
   }, [router]);
 
@@ -198,7 +200,13 @@ export default function AdminDashboard() {
 
         <div className={styles.sidebarFooter}>
           <div className={styles.sidebarUser}>
-            <div className={styles.avatarSmall}>{userName.charAt(0).toUpperCase()}</div>
+            <div className={styles.avatarSmall}>
+              {userAvatar ? (
+                <img src={userAvatar} alt="" className={styles.avatarImg} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                userName.charAt(0).toUpperCase()
+              )}
+            </div>
             <div>
               <div className={styles.sidebarUserName}>{userName}</div>
               <div className={styles.sidebarUserRole}>Administrator</div>
@@ -233,7 +241,13 @@ export default function AdminDashboard() {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="User menu"
               >
-                <div className={styles.avatar}>{userName.charAt(0).toUpperCase()}</div>
+                <div className={styles.avatar}>
+                  {userAvatar ? (
+                    <img src={userAvatar} alt="" className={styles.avatarImg} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                  ) : (
+                    userName.charAt(0).toUpperCase()
+                  )}
+                </div>
               </button>
 
               {isMenuOpen && (

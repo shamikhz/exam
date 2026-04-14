@@ -22,6 +22,7 @@ export default function StudentDashboard() {
   const [view, setView] = useState<View>('dashboard');
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [userId, setUserId] = useState('');
   const [topics, setTopics] = useState<Topic[]>([]);
   const [myResults, setMyResults] = useState<ExamResult[]>([]);
@@ -47,6 +48,7 @@ export default function StudentDashboard() {
     if (!user || user.role !== 'student') { router.replace('/auth'); return; }
     setUserName(user.name);
     setUserEmail(user.email);
+    setUserAvatar(user.avatar || null);
     setUserId(user.userId);
     refreshData(user.userId);
   }, [router]);
@@ -172,7 +174,13 @@ export default function StudentDashboard() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="User menu"
             >
-              <div className={styles.avatar}>{userName.charAt(0).toUpperCase()}</div>
+              <div className={styles.avatar}>
+                {userAvatar ? (
+                  <img src={userAvatar} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                ) : (
+                  userName.charAt(0).toUpperCase()
+                )}
+              </div>
             </button>
 
             {isMenuOpen && (

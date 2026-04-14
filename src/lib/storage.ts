@@ -12,6 +12,7 @@ export interface User {
   bio?: string;
   location?: string;
   phone?: string;
+  avatar?: string;
 }
 
 export interface Topic {
@@ -51,6 +52,7 @@ export interface AuthState {
   role: 'admin' | 'student';
   name: string;
   email: string;
+  avatar?: string;
 }
 
 // ---- Keys ----
@@ -277,7 +279,13 @@ export function login(role: 'admin' | 'student', email: string, password: string
   const users = getUsers();
   const user = users.find((u) => u.email === email && u.password === password && u.role === role);
   if (!user) return null;
-  const auth: AuthState = { userId: user.id, role: user.role, name: user.name, email: user.email };
+  const auth: AuthState = { 
+    userId: user.id, 
+    role: user.role, 
+    name: user.name, 
+    email: user.email,
+    avatar: user.avatar 
+  };
   localStorage.setItem(KEYS.AUTH, JSON.stringify(auth));
   return auth;
 }
@@ -287,7 +295,13 @@ export function loginAny(email: string, password: string): AuthState | null {
   const users = getUsers();
   const user = users.find((u) => u.email === email && u.password === password);
   if (!user) return null;
-  const auth: AuthState = { userId: user.id, role: user.role, name: user.name, email: user.email };
+  const auth: AuthState = { 
+    userId: user.id, 
+    role: user.role, 
+    name: user.name, 
+    email: user.email,
+    avatar: user.avatar 
+  };
   localStorage.setItem(KEYS.AUTH, JSON.stringify(auth));
   return auth;
 }
@@ -312,7 +326,13 @@ export function register(
   };
   users.push(newUser);
   localStorage.setItem(KEYS.USERS, JSON.stringify(users));
-  const auth: AuthState = { userId: newUser.id, role: newUser.role, name: newUser.name, email: newUser.email };
+  const auth: AuthState = { 
+    userId: newUser.id, 
+    role: newUser.role, 
+    name: newUser.name, 
+    email: newUser.email,
+    avatar: newUser.avatar 
+  };
   localStorage.setItem(KEYS.AUTH, JSON.stringify(auth));
   return auth;
 }
@@ -338,6 +358,7 @@ export function updateUserProfile(data: Partial<User>): AuthState | null {
     ...auth,
     name: updatedUser.name,
     email: updatedUser.email,
+    avatar: updatedUser.avatar,
   };
   localStorage.setItem(KEYS.AUTH, JSON.stringify(updatedAuth));
   return updatedAuth;
