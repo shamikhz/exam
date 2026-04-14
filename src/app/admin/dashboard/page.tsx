@@ -198,24 +198,7 @@ export default function AdminDashboard() {
           ))}
         </nav>
 
-        <div className={styles.sidebarFooter}>
-          <div className={styles.sidebarUser}>
-            <div className={styles.avatarSmall}>
-              {userAvatar ? (
-                <img src={userAvatar} alt="" className={styles.avatarImg} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-              ) : (
-                userName.charAt(0).toUpperCase()
-              )}
-            </div>
-            <div>
-              <div className={styles.sidebarUserName}>{userName}</div>
-              <div className={styles.sidebarUserRole}>Administrator</div>
-            </div>
-          </div>
-          <button id="admin-logout" onClick={handleLogout} className={styles.logoutBtn}>
-            Sign Out
-          </button>
-        </div>
+        {/* Sidebar Footer Removed for minimal design */}
       </aside>
 
       {/* Overlay for mobile */}
