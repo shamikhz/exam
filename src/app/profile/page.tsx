@@ -108,11 +108,13 @@ export default function ProfilePage() {
         <main className={styles.card}>
           <div className={styles.profileHeader}>
             <div className={styles.avatarLarge}>
-              {avatar ? (
-                <img src={avatar} alt="Avatar" className={styles.avatarImg} />
-              ) : (
-                userName.charAt(0).toUpperCase()
-              )}
+              <div className={styles.avatarInner}>
+                {avatar ? (
+                  <img src={avatar} alt="Avatar" className={styles.avatarImg} />
+                ) : (
+                  userName.charAt(0).toUpperCase()
+                )}
+              </div>
               <label htmlFor="avatar-upload" className={styles.editBtn} title="Change Avatar">
                 <span className={styles.editIcon}>✏️</span>
               </label>

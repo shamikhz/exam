@@ -99,7 +99,7 @@ export default function AdminDashboard() {
               >
                 <div className={styles.avatar}>
                   {userAvatar ? (
-                    <img src={userAvatar} alt="" className={styles.avatarImg} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                    <img src={userAvatar} alt="" />
                   ) : (
                     userName.charAt(0).toUpperCase()
                   )}

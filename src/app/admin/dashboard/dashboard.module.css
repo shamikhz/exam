@@ -281,6 +281,27 @@
   padding: 0.25rem;
 }
 
+.avatar {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  overflow: hidden; /* Ensure circle shape with large images */
+  flex-shrink: 0;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 @media (max-width: 768px) {
   .menuBtn { display: block; }
 }
