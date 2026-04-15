@@ -76,7 +76,11 @@ export function useStudentDashboard(userId: string) {
   };
 }
 
-export function useExam(userId: string, onExamComplete: (result: ExamResult, questions: Question[], topic: Topic) => void) {
+export function useExam(
+  userId: string, 
+  onExamComplete: (result: ExamResult, questions: Question[], topic: Topic) => void,
+  onStart?: () => void
+) {
   const [examTopic, setExamTopic] = useState<Topic | null>(null);
   const [examQuestions, setExamQuestions] = useState<Question[]>([]);
   const [currentQ, setCurrentQ] = useState(0);
@@ -122,6 +126,7 @@ export function useExam(userId: string, onExamComplete: (result: ExamResult, que
     setCurrentQ(0);
     setTimeLeft(qs.length * 60);
     setExamStarted(true);
+    onStart?.();
   }
 
   useEffect(() => {

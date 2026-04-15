@@ -58,7 +58,7 @@ export default function StudentDashboard() {
   } = useExam(userId, (result, qs, topic) => {
     refreshData(userId);
     openReview(result, qs, topic);
-  });
+  }, () => setView('exam'));
 
   const openResultReview = (result: ExamResult) => {
     const qs = getQuestionsByTopic(result.topicId);
