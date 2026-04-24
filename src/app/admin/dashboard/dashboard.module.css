@@ -479,6 +479,13 @@
   font-size: 1.2rem;
 }
 
+.topicListImg {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
 .topicListName {
   font-size: 0.875rem;
   font-weight: 600;
@@ -616,6 +623,13 @@
   font-size: 2rem;
 }
 
+.topicCardImg {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
 .topicCardName {
   font-size: 1rem;
   font-weight: 700;
@@ -737,6 +751,16 @@
   padding: 0.2rem 0.6rem;
   border-radius: 6px;
   border: 1px solid var(--color-border);
+}
+
+.questionTopicImg {
+  width: 18px;
+  height: 18px;
+  object-fit: cover;
+  border-radius: 3px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 2px;
 }
 
 .questionPoints {
@@ -1043,6 +1067,68 @@
   resize: vertical;
 }
 
+.fileInputContainer {
+  width: 100%;
+}
+
+.fileInputLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100px;
+  border: 2px dashed var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--color-dominant);
+  overflow: hidden;
+}
+
+.fileInputLabel:hover {
+  border-color: var(--color-accent);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.iconPreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.iconPreview img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.iconPreview span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.iconPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-muted);
+}
+
+.placeholderIcon {
+  font-size: 2rem;
+}
+
+.iconPlaceholder span {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1127,6 +1213,18 @@
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--color-text);
+}
+
+.toastError {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .deleteText {

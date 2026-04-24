@@ -23,7 +23,11 @@ export function ResultCard({
   return (
     <div className={styles.resultCard}>
       <div className={styles.resultLeft}>
-        <span className={styles.resultIcon}>{topic?.icon || '📋'}</span>
+        {topic?.icon && (topic.icon.startsWith('data:') || topic.icon.startsWith('http')) ? (
+          <img src={topic.icon} alt={topic.name} className={styles.resultImg} />
+        ) : (
+          <span className={styles.resultIcon}>{topic?.icon || '📋'}</span>
+        )}
         <div>
           <div className={styles.resultTopic}>{topic?.name || 'Unknown Topic'}</div>
           <div className={styles.resultDate}>

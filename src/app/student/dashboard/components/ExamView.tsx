@@ -29,7 +29,13 @@ export function ExamView({
       {/* Progress */}
       <div className={styles.ExamTopgress}>
         <div className={styles.ExamTopgressInfo}>
-          <span>{examTopic.icon} {examTopic.name}</span>
+          <span>
+            {examTopic.icon && (examTopic.icon.startsWith('data:') || examTopic.icon.startsWith('http')) ? (
+              <img src={examTopic.icon} alt={examTopic.name} className={styles.examTopicImg} />
+            ) : (
+              examTopic.icon
+            )} {examTopic.name}
+          </span>
           <span>Question {currentQ + 1} of {examQuestions.length}</span>
         </div>
         <div className={styles.progressTrack}>

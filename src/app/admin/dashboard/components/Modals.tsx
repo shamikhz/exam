@@ -67,8 +67,46 @@ export function Modals({
               </div>
               <div className={styles.formRow}>
                 <div className={styles.inputBlock}>
-                  <label htmlFor="topic-icon">Icon (emoji)</label>
-                  <input id="topic-icon" className={styles.inputField} value={topicForm.icon} onChange={(e) => setTopicForm({ ...topicForm, icon: e.target.value })} placeholder="📚" maxLength={4} />
+                  <label htmlFor="topic-icon">Topic Icon</label>
+                  <div className={styles.fileInputContainer}>
+                    <input 
+                      type="file" 
+                      id="topic-icon" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          if (file.size > 2 * 1024 * 1024) {
+                            alert('Image is too large. Please select an image smaller than 2MB.');
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setTopicForm((prev: any) => ({ ...prev, icon: reader.result as string }));
+                          };
+                          reader.onerror = () => {
+                            alert('Failed to read file. Please try again.');
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }} 
+                      className={styles.fileInput}
+                      style={{ display: 'none' }}
+                    />
+                    <label htmlFor="topic-icon" className={styles.fileInputLabel}>
+                      {topicForm.icon && (topicForm.icon.startsWith('data:') || topicForm.icon.startsWith('http')) ? (
+                        <div className={styles.iconPreview}>
+                          <img src={topicForm.icon} alt="Topic Icon" />
+                          <span>Change Image</span>
+                        </div>
+                      ) : (
+                        <div className={styles.iconPlaceholder}>
+                          <span className={styles.placeholderIcon}>🖼️</span>
+                          <span>{topicForm.icon || 'Select Topic Image'}</span>
+                        </div>
+                      )}
+                    </label>
+                  </div>
                 </div>
                 <div className={styles.inputBlock}>
                   <label htmlFor="topic-difficulty">Difficulty</label>
@@ -99,9 +137,13 @@ export function Modals({
             <form onSubmit={handleQuestionSubmit} id="question-form" className={styles.modalForm}>
               <div className={styles.inputBlock}>
                 <label htmlFor="q-topic">Topic</label>
-                <select id="q-topic" className={styles.inputField} value={questionForm.topicId} onChange={(e) => setTopicForm({ ...questionForm, topicId: e.target.value })} required>
+                <select id="q-topic" className={styles.inputField} value={questionForm.topicId} onChange={(e) => setQuestionForm({ ...questionForm, topicId: e.target.value })} required>
                   <option value="">Select a topic</option>
-                  {topics.map((t) => <option key={t.id} value={t.id}>{t.icon} {t.name}</option>)}
+                  {topics.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? '🖼️' : t.icon} {t.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className={styles.inputBlock}>

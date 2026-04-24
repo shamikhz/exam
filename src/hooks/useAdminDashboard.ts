@@ -66,6 +66,11 @@ export function useAdminDashboard() {
     e.preventDefault();
     setTopicError('');
 
+    if (!topicForm.name.trim()) {
+      setTopicError('Topic name is required.');
+      return;
+    }
+
     const isDuplicate = topics.some(t => 
       t.name.toLowerCase() === topicForm.name.trim().toLowerCase() && 
       t.id !== editingTopic?.id
@@ -76,17 +81,26 @@ export function useAdminDashboard() {
       return;
     }
 
-    const topic: Topic = {
-      id: editingTopic?.id || generateId('topic'),
-      name: topicForm.name.trim(),
-      description: topicForm.description,
-      icon: topicForm.icon,
-      difficulty: topicForm.difficulty,
-      createdAt: editingTopic?.createdAt || new Date().toISOString(),
-    };
-    storageSaveTopic(topic);
-    setShowTopicForm(false);
-    refreshData();
+    try {
+      const topic: Topic = {
+        id: editingTopic?.id || generateId('topic'),
+        name: topicForm.name.trim(),
+        description: topicForm.description,
+        icon: topicForm.icon,
+        difficulty: topicForm.difficulty,
+        createdAt: editingTopic?.createdAt || new Date().toISOString(),
+      };
+      storageSaveTopic(topic);
+      setShowTopicForm(false);
+      refreshData();
+    } catch (err: any) {
+      console.error('Failed to save topic:', err);
+      if (err.name === 'QuotaExceededError' || err.message?.includes('quota')) {
+        setTopicError('Storage limit reached. Try using a smaller image icon.');
+      } else {
+        setTopicError('An unexpected error occurred while saving. Please try again.');
+      }
+    }
   }
 
   function handleDeleteTopic(id: string) {

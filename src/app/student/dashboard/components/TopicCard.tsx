@@ -27,7 +27,11 @@ export function TopicCard({
   return (
     <div className={styles.topicCard}>
       <div className={styles.topicCardTop}>
-        <span className={styles.topicIcon}>{topic.icon}</span>
+        {topic.icon && (topic.icon.startsWith('data:') || topic.icon.startsWith('http')) ? (
+          <img src={topic.icon} alt={topic.name} className={styles.topicImg} />
+        ) : (
+          <span className={styles.topicIcon}>{topic.icon}</span>
+        )}
         <span className={styles.diffBadge} style={{ background: `${difficultyColors[topic.difficulty]}20`, color: difficultyColors[topic.difficulty] }}>
           {topic.difficulty}
         </span>

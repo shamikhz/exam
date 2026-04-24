@@ -81,7 +81,11 @@ export function OverviewTab({
           <div className={styles.topicList}>
             {topics.slice(-4).map((t) => (
               <div key={t.id} className={styles.topicListItem}>
-                <span>{t.icon}</span>
+                {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? (
+                  <img src={t.icon} alt={t.name} className={styles.topicListImg} />
+                ) : (
+                  <span>{t.icon}</span>
+                )}
                 <div>
                   <div className={styles.topicListName}>{t.name}</div>
                   <div className={styles.topicListMeta}>{t.questionCount} questions</div>

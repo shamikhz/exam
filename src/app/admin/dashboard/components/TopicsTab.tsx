@@ -38,7 +38,11 @@ export function TopicsTab({
             className={styles.filterSelect}
           >
             <option value="all">All Topics</option>
-            {topics.map((t) => <option key={t.id} value={t.id}>{t.icon} {t.name}</option>)}
+            {topics.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? '🖼️' : t.icon} {t.name}
+              </option>
+            ))}
           </select>
         </div>
         <button id="add-topic-btn" onClick={onAddTopic} className={styles.addBtn}>
@@ -50,7 +54,11 @@ export function TopicsTab({
         {filteredTopics.map((t) => (
           <div key={t.id} className={styles.topicCard}>
             <div className={styles.topicCardHeader}>
-              <span className={styles.topicCardIcon}>{t.icon}</span>
+              {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? (
+                <img src={t.icon} alt={t.name} className={styles.topicCardImg} />
+              ) : (
+                <span className={styles.topicCardIcon}>{t.icon}</span>
+              )}
               <span className={styles.diffBadge} style={{ background: `${difficultyColors[t.difficulty]}20`, color: difficultyColors[t.difficulty] }}>
                 {t.difficulty}
               </span>

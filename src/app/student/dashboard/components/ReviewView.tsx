@@ -45,7 +45,13 @@ export function ReviewView({
         <div className={styles.scoreMeta}>
           <div className={styles.scoreMetaItem}>
             <span className={styles.scoreMetaLabel}>Topic</span>
-            <span className={styles.scoreMetaValue}>{reviewTopic.icon} {reviewTopic.name}</span>
+            <span className={styles.scoreMetaValue}>
+              {reviewTopic.icon && (reviewTopic.icon.startsWith('data:') || reviewTopic.icon.startsWith('http')) ? (
+                <img src={reviewTopic.icon} alt={reviewTopic.name} className={styles.reviewTopicImg} />
+              ) : (
+                reviewTopic.icon
+              )} {reviewTopic.name}
+            </span>
           </div>
           <div className={styles.scoreMetaItem}>
             <span className={styles.scoreMetaLabel}>Score</span>

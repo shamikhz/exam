@@ -36,7 +36,11 @@ export function QuestionsTab({
             className={styles.filterSelect}
           >
             <option value="all">All Topics</option>
-            {topics.map((t) => <option key={t.id} value={t.id}>{t.icon} {t.name}</option>)}
+            {topics.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? '🖼️' : t.icon} {t.name}
+              </option>
+            ))}
           </select>
         </div>
         <button id="add-question-btn" onClick={onAddQuestion} className={styles.addBtn}>
@@ -52,7 +56,13 @@ export function QuestionsTab({
               <div className={styles.questionNum}>Q{i + 1}</div>
               <div className={styles.questionBody}>
                 <div className={styles.questionMeta}>
-                  <span className={styles.questionTopic}>{topic?.icon} {topic?.name}</span>
+                  <span className={styles.questionTopic}>
+                    {topic?.icon && (topic.icon.startsWith('data:') || topic.icon.startsWith('http')) ? (
+                      <img src={topic.icon} alt={topic.name} className={styles.questionTopicImg} />
+                    ) : (
+                      topic?.icon
+                    )} {topic?.name}
+                  </span>
                   <span className={styles.questionPoints}>{q.points} pts</span>
                 </div>
                 <p className={styles.questionText}>{q.text}</p>
