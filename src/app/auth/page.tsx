@@ -38,6 +38,13 @@ export default function AuthPage() {
     if (user) {
       router.replace(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
     }
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const initialRole = searchParams.get('role');
+    if (initialRole === 'admin') {
+      setRole('admin');
+      setMode('login');
+    }
   }, [router]);
 
   function resetForm() {

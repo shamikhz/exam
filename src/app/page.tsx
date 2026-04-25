@@ -166,7 +166,7 @@ export default function LandingPage() {
             <li>✅ Monitor student performance</li>
             <li>✅ Export and manage data</li>
           </ul>
-          <Link href="/auth" className={styles.panelBtnWhite} id="panel-admin-btn">
+          <Link href="/auth?role=admin" className={styles.panelBtnWhite} id="panel-admin-btn">
             Admin Access →
           </Link>
         </div>
