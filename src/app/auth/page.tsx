@@ -33,13 +33,18 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const [seeding, setSeeding] = useState(true);
 
   useEffect(() => {
-    seedDefaultData();
-    const user = getCurrentUser();
-    if (user) {
-      router.replace(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
-    }
+    const init = async () => {
+      await seedDefaultData();
+      setSeeding(false);
+      const user = getCurrentUser();
+      if (user) {
+        router.replace(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
+      }
+    };
+    init();
 
     const searchParams = new URLSearchParams(window.location.search);
     const initialRole = searchParams.get('role');
@@ -81,19 +86,18 @@ export default function AuthPage() {
     }
 
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
 
     if (mode === 'login') {
-      const allUsers = getUsers();
+      const allUsers = await getUsers();
       const userExists = allUsers.some(u => u.email === email.trim().toLowerCase());
-      
+
       if (!userExists) {
         setError('No account found with this email. Please check for typos or create a new account.');
         setLoading(false);
         return;
       }
 
-      const result = loginAny(email.trim().toLowerCase(), password);
+      const result = await loginAny(email.trim().toLowerCase(), password);
       if (!result) {
         setError('Incorrect password. Please try again.');
         setLoading(false);
@@ -101,7 +105,7 @@ export default function AuthPage() {
       }
       redirectByRole(result);
     } else {
-      const result = register(name, email, password, role);
+      const result = await register(name, email, password, role);
       if (typeof result === 'string') {
         setError(result);
         setLoading(false);
@@ -120,31 +124,27 @@ export default function AuthPage() {
         const user = result.user;
         const userEmail = user.email || `${user.uid}@examapp.com`;
         const userName = user.displayName || 'Google User';
-        
-        const allUsers = getUsers();
+
+        const allUsers = await getUsers();
         const userExists = allUsers.some(u => u.email.toLowerCase() === userEmail.toLowerCase());
 
         if (mode === 'login') {
           if (userExists) {
-            const existing = loginWithoutPassword(userEmail);
+            const existing = await loginWithoutPassword(userEmail);
             if (existing) redirectByRole(existing);
           } else {
-            // New user trying to login: redirect to create account page
             setMode('register');
             setName(userName);
             setEmail(userEmail);
             setError('Account not found. Please complete the form to create your account.');
           }
         } else {
-          // Mode is 'register': they want to create an account with Google card
           if (userExists) {
-            // Already have an account, just log them in
-            const existing = loginWithoutPassword(userEmail);
+            const existing = await loginWithoutPassword(userEmail);
             if (existing) redirectByRole(existing);
           } else {
-            // Auto-create their account since they clicked Google on the Register tab
             const demoPassword = `google-auth-${user.uid}`;
-            const regResult = register(userName, userEmail, demoPassword, role);
+            const regResult = await register(userName, userEmail, demoPassword, role);
             if (typeof regResult !== 'string') {
               redirectByRole(regResult);
             } else {
@@ -153,16 +153,16 @@ export default function AuthPage() {
           }
         }
       } else {
-        // Fallback demo for Github
+        // GitHub (demo fallback)
         await new Promise((r) => setTimeout(r, 1000));
         const demoEmail = `${id}-demo@examapp.com`;
-        
-        const allUsers = getUsers();
+
+        const allUsers = await getUsers();
         const userExists = allUsers.some(u => u.email.toLowerCase() === demoEmail.toLowerCase());
 
         if (mode === 'login') {
           if (userExists) {
-            const existing = loginWithoutPassword(demoEmail);
+            const existing = await loginWithoutPassword(demoEmail);
             if (existing) redirectByRole(existing);
           } else {
             setMode('register');
@@ -172,10 +172,10 @@ export default function AuthPage() {
           }
         } else {
           if (userExists) {
-            const existing = loginWithoutPassword(demoEmail);
+            const existing = await loginWithoutPassword(demoEmail);
             if (existing) redirectByRole(existing);
           } else {
-            const result = register(`${id.charAt(0).toUpperCase() + id.slice(1)} User`, demoEmail, 'social-auth-demo', role);
+            const result = await register(`${id.charAt(0).toUpperCase() + id.slice(1)} User`, demoEmail, 'social-auth-demo', role);
             if (typeof result !== 'string') redirectByRole(result);
           }
         }
@@ -194,6 +194,17 @@ export default function AuthPage() {
       setPassword(role === 'admin' ? 'admin123' : 'student123');
     }
   };
+
+  if (seeding) {
+    return (
+      <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div className={styles.spinner} style={{ margin: '0 auto 1rem' }} />
+          <p style={{ opacity: 0.7 }}>Loading ExamTop...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -292,7 +303,7 @@ export default function AuthPage() {
                 >
                   <span className={styles.roleCardIcon}>🎓</span>
                   <span className={styles.roleCardName}>Student</span>
-                  <span className={styles.roleCardDesc}>Take exams & learn</span>
+                  <span className={styles.roleCardDesc}>Take exams &amp; learn</span>
                   {role === 'student' && <span className={styles.roleCheckmark}>✓</span>}
                 </button>
                 <button
@@ -302,7 +313,7 @@ export default function AuthPage() {
                 >
                   <span className={styles.roleCardIcon}>⚙️</span>
                   <span className={styles.roleCardName}>Admin</span>
-                  <span className={styles.roleCardDesc}>Manage & monitor</span>
+                  <span className={styles.roleCardDesc}>Manage &amp; monitor</span>
                   {role === 'admin' && <span className={styles.roleCheckmark}>✓</span>}
                 </button>
               </div>
@@ -329,8 +340,6 @@ export default function AuthPage() {
                 ))}
               </div>
             )}
-
-
 
             {/* Form */}
             <form onSubmit={handleSubmit} id="auth-form" className={styles.form} noValidate>

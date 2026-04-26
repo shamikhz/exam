@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { 
+import {
   getTopics, saveTopic as storageSaveTopic, deleteTopic as storageDeleteTopic,
   getQuestions, saveQuestion as storageSaveQuestion, deleteQuestion as storageDeleteQuestion,
   getResults, getUsers, deleteUser as storageDeleteUser,
@@ -15,9 +15,10 @@ export function useAdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [topics, setTopics] = useState<Topic[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [results, setResults] = useState<ReturnType<typeof getResults>>([]);
-  const [users, setUsers] = useState<ReturnType<typeof getUsers>>([]);
-  
+  const [results, setResults] = useState<Awaited<ReturnType<typeof getResults>>>([]);
+  const [users, setUsers] = useState<Awaited<ReturnType<typeof getUsers>>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [selectedTopicView, setSelectedTopicView] = useState('all');
   const [selectedTopicFilter, setSelectedTopicFilter] = useState('all');
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
@@ -38,11 +39,19 @@ export function useAdminDashboard() {
 
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'topic' | 'question' | 'student'; id: string } | null>(null);
 
-  const refreshData = useCallback(() => {
-    setTopics(getTopics());
-    setQuestions(getQuestions());
-    setResults(getResults());
-    setUsers(getUsers());
+  const refreshData = useCallback(async () => {
+    setIsLoading(true);
+    const [t, q, r, u] = await Promise.all([
+      getTopics(),
+      getQuestions(),
+      getResults(),
+      getUsers(),
+    ]);
+    setTopics(t);
+    setQuestions(q);
+    setResults(r);
+    setUsers(u);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -62,7 +71,7 @@ export function useAdminDashboard() {
     setShowTopicForm(true);
   }
 
-  function handleTopicSubmit(e: React.FormEvent) {
+  async function handleTopicSubmit(e: React.FormEvent) {
     e.preventDefault();
     setTopicError('');
 
@@ -71,8 +80,8 @@ export function useAdminDashboard() {
       return;
     }
 
-    const isDuplicate = topics.some(t => 
-      t.name.toLowerCase() === topicForm.name.trim().toLowerCase() && 
+    const isDuplicate = topics.some(t =>
+      t.name.toLowerCase() === topicForm.name.trim().toLowerCase() &&
       t.id !== editingTopic?.id
     );
 
@@ -90,23 +99,19 @@ export function useAdminDashboard() {
         difficulty: topicForm.difficulty,
         createdAt: editingTopic?.createdAt || new Date().toISOString(),
       };
-      storageSaveTopic(topic);
+      await storageSaveTopic(topic);
       setShowTopicForm(false);
-      refreshData();
+      await refreshData();
     } catch (err: any) {
       console.error('Failed to save topic:', err);
-      if (err.name === 'QuotaExceededError' || err.message?.includes('quota')) {
-        setTopicError('Storage limit reached. Try using a smaller image icon.');
-      } else {
-        setTopicError('An unexpected error occurred while saving. Please try again.');
-      }
+      setTopicError('An unexpected error occurred while saving. Please try again.');
     }
   }
 
-  function handleDeleteTopic(id: string) {
-    storageDeleteTopic(id);
+  async function handleDeleteTopic(id: string) {
+    await storageDeleteTopic(id);
     setDeleteConfirm(null);
-    refreshData();
+    await refreshData();
   }
 
   // Question CRUD
@@ -116,15 +121,15 @@ export function useAdminDashboard() {
       setQuestionForm({ topicId: q.topicId, text: q.text, options: [...q.options], correctAnswer: q.correctAnswer, explanation: q.explanation, points: q.points });
     } else {
       setEditingQuestion(null);
-      setQuestionForm({ 
-        topicId: selectedTopicFilter !== 'all' ? selectedTopicFilter : (topics[0]?.id || ''), 
-        text: '', options: ['', '', '', ''], correctAnswer: 0, explanation: '', points: 10 
+      setQuestionForm({
+        topicId: selectedTopicFilter !== 'all' ? selectedTopicFilter : (topics[0]?.id || ''),
+        text: '', options: ['', '', '', ''], correctAnswer: 0, explanation: '', points: 10
       });
     }
     setShowQuestionForm(true);
   }
 
-  function handleQuestionSubmit(e: React.FormEvent) {
+  async function handleQuestionSubmit(e: React.FormEvent) {
     e.preventDefault();
     const q: Question = {
       id: editingQuestion?.id || generateId('q'),
@@ -136,15 +141,15 @@ export function useAdminDashboard() {
       points: questionForm.points,
       createdAt: editingQuestion?.createdAt || new Date().toISOString(),
     };
-    storageSaveQuestion(q);
+    await storageSaveQuestion(q);
     setShowQuestionForm(false);
-    refreshData();
+    await refreshData();
   }
 
-  function handleDeleteQuestion(id: string) {
-    storageDeleteQuestion(id);
+  async function handleDeleteQuestion(id: string) {
+    await storageDeleteQuestion(id);
     setDeleteConfirm(null);
-    refreshData();
+    await refreshData();
   }
 
   async function handleDeleteStudent(id: string) {
@@ -157,12 +162,12 @@ export function useAdminDashboard() {
           body: JSON.stringify({ email: userToDelete.email })
         });
       } catch (err) {
-        console.error("Failed to delete user from Firebase:", err);
+        console.error("Failed to delete user from Firebase Auth:", err);
       }
     }
-    storageDeleteUser(id);
+    await storageDeleteUser(id);
     setDeleteConfirm(null);
-    refreshData();
+    await refreshData();
   }
 
   // Derived Values
@@ -179,22 +184,23 @@ export function useAdminDashboard() {
   return {
     activeTab, setActiveTab,
     topics, questions, results, users,
+    isLoading,
     selectedTopicView, setSelectedTopicView,
     selectedTopicFilter, setSelectedTopicFilter,
     studentSearchQuery, setStudentSearchQuery,
     studentPage, setStudentPage, STUDENTS_PER_PAGE,
-    
+
     // Topic logic
     showTopicForm, setShowTopicForm, editingTopic, topicForm, setTopicForm, topicError,
     openTopicForm, handleTopicSubmit, handleDeleteTopic,
-    
+
     // Question logic
     showQuestionForm, setShowQuestionForm, editingQuestion, questionForm, setQuestionForm,
     openQuestionForm, handleQuestionSubmit, handleDeleteQuestion,
-    
+
     // Student logic
     handleDeleteStudent,
-    
+
     // Modals
     deleteConfirm, setDeleteConfirm,
 

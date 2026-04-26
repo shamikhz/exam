@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { 
+import {
   getQuestionsByTopic,
-  type ExamResult, 
-  type Question, 
-  type Topic 
+  type ExamResult,
+  type Question,
+  type Topic
 } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
 import { useDashboard } from '@/hooks/useDashboard';
@@ -26,17 +26,16 @@ import { ReviewView } from './components/ReviewView';
 
 export default function StudentDashboard() {
   const { theme, toggleTheme } = useTheme();
-  
-  // Custom Hooks for Decoupled Logic
-  const { 
+
+  const {
     userName, userEmail, userAvatar, userId,
-    isMenuOpen, setIsMenuOpen, handleLogout 
+    isMenuOpen, setIsMenuOpen, handleLogout
   } = useDashboard('student');
 
   const {
     view, setView, topics, myResults, searchQuery, setSearchQuery,
     resultsPage, setResultsPage, RESULTS_PER_PAGE,
-    refreshData, handleDeleteResult, stats
+    isLoading, refreshData, handleDeleteResult, stats
   } = useStudentDashboard(userId);
 
   // Review state
@@ -60,26 +59,26 @@ export default function StudentDashboard() {
     openReview(result, qs, topic);
   }, () => setView('exam'));
 
-  const openResultReview = (result: ExamResult) => {
-    const qs = getQuestionsByTopic(result.topicId);
+  // openResultReview now awaits async getQuestionsByTopic
+  const openResultReview = async (result: ExamResult) => {
+    const qs = await getQuestionsByTopic(result.topicId);
     const topic = topics.find((t) => t.id === result.topicId) || null;
     if (topic) openReview(result, qs, topic);
   };
 
-  // Utilities
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60).toString().padStart(2, '0');
     const s = (secs % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   };
 
-  const difficultyColors: Record<string, string> = { 
-    Easy: '#10b981', Medium: '#f59e0b', Hard: '#ef4444' 
+  const difficultyColors: Record<string, string> = {
+    Easy: '#10b981', Medium: '#f59e0b', Hard: '#ef4444'
   };
 
   return (
     <div className={styles.page}>
-      <DashboardHeader 
+      <DashboardHeader
         view={view}
         onBack={() => setView('dashboard')}
         examStarted={examStarted}
@@ -110,28 +109,28 @@ export default function StudentDashboard() {
             </div>
 
             <div className={styles.statsRow}>
-              <StatCard 
+              <StatCard
                 icon="📋" value={stats.totalExams} label="Exams Taken"
                 className={styles.statCard} iconClassName={styles.statIcon}
                 infoClassName={styles.statInfo} valueClassName={styles.statValue}
                 labelClassName={styles.statLabel}
                 iconStyle={{ background: 'rgba(37,99,235,0.1)', color: '#2563eb' }}
               />
-              <StatCard 
+              <StatCard
                 icon="📊" value={`${stats.avgPercent}%`} label="Avg Score"
                 className={styles.statCard} iconClassName={styles.statIcon}
                 infoClassName={styles.statInfo} valueClassName={styles.statValue}
                 labelClassName={styles.statLabel}
                 iconStyle={{ background: 'rgba(16,185,129,0.1)', color: '#10b981' }}
               />
-              <StatCard 
+              <StatCard
                 icon="🏆" value={`${stats.bestPercent}%`} label="Best Score"
                 className={styles.statCard} iconClassName={styles.statIcon}
                 infoClassName={styles.statInfo} valueClassName={styles.statValue}
                 labelClassName={styles.statLabel}
                 iconStyle={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}
               />
-              <StatCard 
+              <StatCard
                 icon="📚" value={stats.topicsCount} label="Topics"
                 className={styles.statCard} iconClassName={styles.statIcon}
                 infoClassName={styles.statInfo} valueClassName={styles.statValue}
@@ -140,96 +139,105 @@ export default function StudentDashboard() {
               />
             </div>
 
-            <section>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>Available Topics</h2>
-                <div className={styles.searchBox}>
-                  <span className={styles.searchIcon}>🔍</span>
-                  <input 
-                    type="text" 
-                    placeholder="Search topics..." 
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className={styles.searchInput}
-                  />
-                </div>
+            {isLoading ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '30vh', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ width: 40, height: 40, border: '4px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                <p style={{ opacity: 0.6 }}>Loading topics...</p>
               </div>
-              
-              <div className={styles.topicsGrid}>
-                {topics
-                  .filter(t => 
-                    t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                    t.description.toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-                  .map((t) => (
-                    <TopicCard 
-                      key={t.id} topic={t} myResults={myResults} 
-                      onStartExam={startExam} difficultyColors={difficultyColors}
-                      styles={styles}
-                    />
-                  ))}
-
-                {topics.length === 0 && (
-                  <div className={styles.emptyState}>
-                    <span style={{ fontSize: '3rem' }}>📚</span>
-                    <p>No topics available yet. Ask your admin to create some!</p>
-                  </div>
-                )}
-                
-                {topics.length > 0 && topics.filter(t => 
-                    t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                    t.description.toLowerCase().includes(searchQuery.toLowerCase())
-                  ).length === 0 && (
-                  <div className={styles.emptyState}>
-                    <span style={{ fontSize: '3rem' }}>🔍</span>
-                    <p>No topics match "{searchQuery}"</p>
-                    <button onClick={() => setSearchQuery('')} className={styles.clearBtn}>Clear Search</button>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {myResults.length > 0 && (
-              <section className={styles.resultsSection}>
-                <div className={styles.sectionHeader}>
-                  <h2 className={styles.sectionTitle}>Recent Results</h2>
-                  <div className={styles.resultsCount}>
-                    Total: {myResults.length} records
-                  </div>
-                </div>
-                
-                <div className={styles.resultsList}>
-                  {[...myResults]
-                    .reverse()
-                    .slice((resultsPage - 1) * RESULTS_PER_PAGE, resultsPage * RESULTS_PER_PAGE)
-                    .map((r) => (
-                      <ResultCard 
-                        key={r.id} result={r} 
-                        topic={topics.find(t => t.id === r.topicId)}
-                        onReview={openResultReview}
-                        onDelete={handleDeleteResult}
-                        styles={styles}
+            ) : (
+              <>
+                <section>
+                  <div className={styles.sectionHeader}>
+                    <h2 className={styles.sectionTitle}>Available Topics</h2>
+                    <div className={styles.searchBox}>
+                      <span className={styles.searchIcon}>🔍</span>
+                      <input
+                        type="text"
+                        placeholder="Search topics..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className={styles.searchInput}
                       />
-                    ))}
-                </div>
+                    </div>
+                  </div>
 
-                <Pagination 
-                  currentPage={resultsPage}
-                  totalItems={myResults.length}
-                  itemsPerPage={RESULTS_PER_PAGE}
-                  onPageChange={setResultsPage}
-                  className={styles.pagination}
-                  btnClassName={styles.pageBtn}
-                  infoClassName={styles.pageInfo}
-                />
-              </section>
+                  <div className={styles.topicsGrid}>
+                    {topics
+                      .filter(t =>
+                        t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        t.description.toLowerCase().includes(searchQuery.toLowerCase())
+                      )
+                      .map((t) => (
+                        <TopicCard
+                          key={t.id} topic={t} myResults={myResults}
+                          onStartExam={startExam} difficultyColors={difficultyColors}
+                          styles={styles}
+                        />
+                      ))}
+
+                    {topics.length === 0 && (
+                      <div className={styles.emptyState}>
+                        <span style={{ fontSize: '3rem' }}>📚</span>
+                        <p>No topics available yet. Ask your admin to create some!</p>
+                      </div>
+                    )}
+
+                    {topics.length > 0 && topics.filter(t =>
+                      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      t.description.toLowerCase().includes(searchQuery.toLowerCase())
+                    ).length === 0 && (
+                      <div className={styles.emptyState}>
+                        <span style={{ fontSize: '3rem' }}>🔍</span>
+                        <p>No topics match &quot;{searchQuery}&quot;</p>
+                        <button onClick={() => setSearchQuery('')} className={styles.clearBtn}>Clear Search</button>
+                      </div>
+                    )}
+                  </div>
+                </section>
+
+                {myResults.length > 0 && (
+                  <section className={styles.resultsSection}>
+                    <div className={styles.sectionHeader}>
+                      <h2 className={styles.sectionTitle}>Recent Results</h2>
+                      <div className={styles.resultsCount}>
+                        Total: {myResults.length} records
+                      </div>
+                    </div>
+
+                    <div className={styles.resultsList}>
+                      {[...myResults]
+                        .reverse()
+                        .slice((resultsPage - 1) * RESULTS_PER_PAGE, resultsPage * RESULTS_PER_PAGE)
+                        .map((r) => (
+                          <ResultCard
+                            key={r.id} result={r}
+                            topic={topics.find(t => t.id === r.topicId)}
+                            onReview={openResultReview}
+                            onDelete={handleDeleteResult}
+                            styles={styles}
+                          />
+                        ))}
+                    </div>
+
+                    <Pagination
+                      currentPage={resultsPage}
+                      totalItems={myResults.length}
+                      itemsPerPage={RESULTS_PER_PAGE}
+                      onPageChange={setResultsPage}
+                      className={styles.pagination}
+                      btnClassName={styles.pageBtn}
+                      infoClassName={styles.pageInfo}
+                    />
+                  </section>
+                )}
+              </>
             )}
           </div>
         )}
 
         {/* ================== EXAM VIEW ================== */}
         {view === 'exam' && examTopic && (
-          <ExamView 
+          <ExamView
             examTopic={examTopic}
             examQuestions={examQuestions}
             currentQ={currentQ}
@@ -243,7 +251,7 @@ export default function StudentDashboard() {
 
         {/* ================== REVIEW VIEW ================== */}
         {view === 'review' && reviewResult && reviewTopic && (
-          <ReviewView 
+          <ReviewView
             reviewResult={reviewResult}
             reviewTopic={reviewTopic}
             reviewQuestions={reviewQuestions}

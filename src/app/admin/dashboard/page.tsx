@@ -20,35 +20,28 @@ export default function AdminDashboard() {
   const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Custom Hooks for Decoupled Logic
-  const { 
+  const {
     userName, userEmail, userAvatar,
-    isMenuOpen, setIsMenuOpen, handleLogout 
+    isMenuOpen, setIsMenuOpen, handleLogout
   } = useDashboard('admin');
 
   const {
     activeTab, setActiveTab,
     topics, questions, results, users,
+    isLoading,
     selectedTopicView, setSelectedTopicView,
     selectedTopicFilter, setSelectedTopicFilter,
     studentSearchQuery, setStudentSearchQuery,
     studentPage, setStudentPage, STUDENTS_PER_PAGE,
-    
-    // Topic logic
+
     showTopicForm, setShowTopicForm, editingTopic, topicForm, setTopicForm, topicError,
     openTopicForm, handleTopicSubmit, handleDeleteTopic,
-    
-    // Question logic
+
     showQuestionForm, setShowQuestionForm, editingQuestion, questionForm, setQuestionForm,
     openQuestionForm, handleQuestionSubmit, handleDeleteQuestion,
-    
-    // Student logic
-    handleDeleteStudent,
-    
-    // Modals
-    deleteConfirm, setDeleteConfirm,
 
-    // Derived
+    handleDeleteStudent,
+    deleteConfirm, setDeleteConfirm,
     stats,
     filteredQuestions
   } = useAdminDashboard();
@@ -60,13 +53,13 @@ export default function AdminDashboard() {
     { id: 'students', label: 'Students', icon: '👥' },
   ];
 
-  const difficultyColors: Record<string, string> = { 
-    Easy: '#10b981', Medium: '#f59e0b', Hard: '#ef4444' 
+  const difficultyColors: Record<string, string> = {
+    Easy: '#10b981', Medium: '#f59e0b', Hard: '#ef4444'
   };
 
   return (
     <div className={styles.layout}>
-      <Sidebar 
+      <Sidebar
         sidebarOpen={sidebarOpen}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -75,7 +68,6 @@ export default function AdminDashboard() {
         styles={styles}
       />
 
-      {/* Overlay for mobile */}
       {sidebarOpen && <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />}
 
       <div className={styles.main}>
@@ -91,9 +83,9 @@ export default function AdminDashboard() {
           </div>
           <div className={styles.topbarRight}>
             <div className={styles.avatarGroup}>
-              <button 
+              <button
                 id="admin-avatar-btn"
-                className={styles.avatarBtn} 
+                className={styles.avatarBtn}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="User menu"
               >
@@ -134,51 +126,60 @@ export default function AdminDashboard() {
         </header>
 
         <div className={styles.content}>
-          {activeTab === 'overview' && (
-            <OverviewTab 
-              stats={stats} topics={topics} 
-              difficultyColors={difficultyColors} styles={styles} 
-            />
-          )}
+          {isLoading ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ width: 48, height: 48, border: '4px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              <p style={{ opacity: 0.6 }}>Loading dashboard data...</p>
+            </div>
+          ) : (
+            <>
+              {activeTab === 'overview' && (
+                <OverviewTab
+                  stats={stats} topics={topics}
+                  difficultyColors={difficultyColors} styles={styles}
+                />
+              )}
 
-          {activeTab === 'topics' && (
-            <TopicsTab 
-              topics={topics} selectedTopicView={selectedTopicView}
-              setSelectedTopicView={setSelectedTopicView}
-              onAddTopic={() => openTopicForm()}
-              onEditTopic={openTopicForm}
-              onDeleteTopic={(id) => setDeleteConfirm({ type: 'topic', id })}
-              difficultyColors={difficultyColors} styles={styles}
-            />
-          )}
+              {activeTab === 'topics' && (
+                <TopicsTab
+                  topics={topics} selectedTopicView={selectedTopicView}
+                  setSelectedTopicView={setSelectedTopicView}
+                  onAddTopic={() => openTopicForm()}
+                  onEditTopic={openTopicForm}
+                  onDeleteTopic={(id) => setDeleteConfirm({ type: 'topic', id })}
+                  difficultyColors={difficultyColors} styles={styles}
+                />
+              )}
 
-          {activeTab === 'questions' && (
-            <QuestionsTab 
-              topics={topics} filteredQuestions={filteredQuestions}
-              selectedTopicFilter={selectedTopicFilter}
-              setSelectedTopicFilter={setSelectedTopicFilter}
-              onAddQuestion={() => openQuestionForm()}
-              onEditQuestion={openQuestionForm}
-              onDeleteQuestion={(id) => setDeleteConfirm({ type: 'question', id })}
-              styles={styles}
-            />
-          )}
+              {activeTab === 'questions' && (
+                <QuestionsTab
+                  topics={topics} filteredQuestions={filteredQuestions}
+                  selectedTopicFilter={selectedTopicFilter}
+                  setSelectedTopicFilter={setSelectedTopicFilter}
+                  onAddQuestion={() => openQuestionForm()}
+                  onEditQuestion={openQuestionForm}
+                  onDeleteQuestion={(id) => setDeleteConfirm({ type: 'question', id })}
+                  styles={styles}
+                />
+              )}
 
-          {activeTab === 'students' && (
-            <StudentsTab 
-              users={users} results={results}
-              studentSearchQuery={studentSearchQuery}
-              setStudentSearchQuery={setStudentSearchQuery}
-              studentPage={studentPage} setStudentPage={setStudentPage}
-              STUDENTS_PER_PAGE={STUDENTS_PER_PAGE}
-              onDeleteStudent={(id) => setDeleteConfirm({ type: 'student', id })}
-              styles={styles}
-            />
+              {activeTab === 'students' && (
+                <StudentsTab
+                  users={users} results={results}
+                  studentSearchQuery={studentSearchQuery}
+                  setStudentSearchQuery={setStudentSearchQuery}
+                  studentPage={studentPage} setStudentPage={setStudentPage}
+                  STUDENTS_PER_PAGE={STUDENTS_PER_PAGE}
+                  onDeleteStudent={(id) => setDeleteConfirm({ type: 'student', id })}
+                  styles={styles}
+                />
+              )}
+            </>
           )}
         </div>
       </div>
 
-      <Modals 
+      <Modals
         showTopicForm={showTopicForm} setShowTopicForm={setShowTopicForm}
         editingTopic={editingTopic} topicForm={topicForm}
         setTopicForm={setTopicForm} topicError={topicError}
@@ -186,7 +187,7 @@ export default function AdminDashboard() {
         showQuestionForm={showQuestionForm} setShowQuestionForm={setShowQuestionForm}
         editingQuestion={editingQuestion} questionForm={questionForm}
         setQuestionForm={setQuestionForm} handleQuestionSubmit={handleQuestionSubmit}
-        topics={topics} 
+        topics={topics}
         deleteConfirm={deleteConfirm} setDeleteConfirm={setDeleteConfirm}
         users={users} handleDeleteTopic={handleDeleteTopic}
         handleDeleteQuestion={handleDeleteQuestion}

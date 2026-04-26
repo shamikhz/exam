@@ -172,6 +172,33 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ---- Footer ---- */}
+      <footer className={styles.footer}>
+        <div className={styles.footerBrand}>
+          <div className={styles.footerLogoContainer}>
+            <span className={styles.footerLogo}>⚡</span>
+            <span className={styles.footerTitle}>ExamTop</span>
+          </div>
+          <p className={styles.footerText}>© 2026 ExamTop. All rights reserved.</p>
+        </div>
+
+        {/* 
+        <div className={styles.footerNewsletter}>
+          <h3 className={styles.footerHeading}>Subscribe to our newsletter</h3>
+          <div className={styles.footerInputGroup}>
+            <input type="email" placeholder="Enter your email" className={styles.footerInput} />
+            <button className={styles.footerSubmitBtn}>Subscribe</button>
+          </div>
+        </div>
+        */}
+
+        <div className={styles.footerLinks}>
+          <Link href="#">Privacy Policy</Link>
+          <Link href="#">Terms of Service</Link>
+          <Link href="#">Contact Us</Link>
+        </div>
+      </footer>
+
     </div>
   );
 }

@@ -599,22 +599,98 @@
 .footer {
   background: var(--color-secondary);
   border-top: 1px solid var(--color-border);
-  padding: 2rem 4rem;
+  padding: 3rem 4rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 2rem;
+}
+
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footerLogoContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footerLogo {
+  font-size: 1.5rem;
+}
+
+.footerTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.5px;
+  margin-left: 0.5rem;
 }
 
 .footerText {
   font-size: 0.875rem;
   color: var(--color-text-muted);
+  margin-top: 0.5rem;
+}
+
+.footerNewsletter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.footerHeading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.footerInputGroup {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.footerInput {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-dominant);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 200px;
+}
+
+.footerInput:focus {
+  border-color: var(--color-accent);
+}
+
+.footerSubmitBtn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  background: var(--color-accent);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.footerSubmitBtn:hover {
+  background: var(--color-accent-hover, #4f46e5);
 }
 
 .footerLinks {
   display: flex;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
 .footerLinks a {
@@ -668,7 +744,8 @@
 
 @media (max-width: 560px) {
   .navTitle {
-    display: none;
+    display: block;
+    font-size: 1.1rem;
   }
   .navBtnSecondary {
     display: none;
@@ -678,5 +755,17 @@
     align-items: center;
     text-align: center;
     padding: 1.5rem;
+  }
+  .footerBrand {
+    align-items: center;
+  }
+  .footerLogoContainer {
+    justify-content: center;
+  }
+  .footerLogo {
+    display: none;
+  }
+  .footerTitle {
+    margin-left: 0;
   }
 }

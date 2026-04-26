@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  getTopics, 
-  getResultsByStudent, 
+import {
+  getTopics,
+  getResultsByStudent,
   deleteResult as storageDeleteResult,
   getQuestionsByTopic,
   saveResult,
   generateId,
-  type Topic, 
+  type Topic,
   type ExamResult,
   type Question
 } from '@/lib/storage';
@@ -21,11 +21,19 @@ export function useStudentDashboard(userId: string) {
   const [myResults, setMyResults] = useState<ExamResult[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [resultsPage, setResultsPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const RESULTS_PER_PAGE = 5;
 
-  const refreshData = useCallback((uid: string) => {
-    setTopics(getTopics());
-    setMyResults(getResultsByStudent(uid));
+  const refreshData = useCallback(async (uid: string) => {
+    if (!uid) return;
+    setIsLoading(true);
+    const [t, r] = await Promise.all([
+      getTopics(),
+      getResultsByStudent(uid),
+    ]);
+    setTopics(t);
+    setMyResults(r);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -34,11 +42,11 @@ export function useStudentDashboard(userId: string) {
     }
   }, [userId, refreshData]);
 
-  function handleDeleteResult(id: string) {
+  async function handleDeleteResult(id: string) {
     if (window.confirm('Are you sure you want to delete this result? This cannot be undone.')) {
-      storageDeleteResult(id);
-      refreshData(userId);
-      
+      await storageDeleteResult(id);
+      await refreshData(userId);
+
       const totalAfter = myResults.length - 1;
       const maxPages = Math.ceil(totalAfter / RESULTS_PER_PAGE) || 1;
       if (resultsPage > maxPages) setResultsPage(maxPages);
@@ -65,6 +73,7 @@ export function useStudentDashboard(userId: string) {
     resultsPage,
     setResultsPage,
     RESULTS_PER_PAGE,
+    isLoading,
     refreshData,
     handleDeleteResult,
     stats: {
@@ -77,7 +86,7 @@ export function useStudentDashboard(userId: string) {
 }
 
 export function useExam(
-  userId: string, 
+  userId: string,
   onExamComplete: (result: ExamResult, questions: Question[], topic: Topic) => void,
   onStart?: () => void
 ) {
@@ -89,7 +98,7 @@ export function useExam(
   const [examStarted, setExamStarted] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const submitExam = useCallback(() => {
+  const submitExam = useCallback(async () => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (!examTopic) return;
 
@@ -97,7 +106,7 @@ export function useExam(
       return selectedAnswers[i] === q.correctAnswer ? acc + q.points : acc;
     }, 0);
     const totalPoints = examQuestions.reduce((acc, q) => acc + q.points, 0);
-    
+
     const result: ExamResult = {
       id: generateId('result'),
       studentId: userId,
@@ -108,14 +117,14 @@ export function useExam(
       timeTaken: examQuestions.length * 60 - timeLeft,
       completedAt: new Date().toISOString(),
     };
-    
-    saveResult(result);
+
+    await saveResult(result);
     setExamStarted(false);
     onExamComplete(result, examQuestions, examTopic);
   }, [examTopic, examQuestions, selectedAnswers, timeLeft, userId, onExamComplete]);
 
-  function startExam(topic: Topic) {
-    const qs = getQuestionsByTopic(topic.id);
+  async function startExam(topic: Topic) {
+    const qs = await getQuestionsByTopic(topic.id);
     if (qs.length === 0) {
       alert('No questions available for this topic yet.');
       return;

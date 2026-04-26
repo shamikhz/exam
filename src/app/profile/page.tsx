@@ -25,28 +25,31 @@ export default function ProfilePage() {
   const [avatar, setAvatar] = useState<string | null>(null);
 
   useEffect(() => {
-    const auth = getCurrentUser();
-    if (!auth) {
-      router.replace('/auth');
-      return;
-    }
+    const init = async () => {
+      const auth = getCurrentUser();
+      if (!auth) {
+        router.replace('/auth');
+        return;
+      }
 
-    const allUsers = getUsers();
-    const user = allUsers.find(u => u.id === auth.userId);
-    
-    if (user) {
-      setUserName(user.name);
-      setRole(user.role);
-      setFormData({
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        location: user.location || '',
-        bio: user.bio || '',
-      });
-      setAvatar(user.avatar || null);
-    }
-    setLoading(false);
+      const allUsers = await getUsers();
+      const user = allUsers.find(u => u.id === auth.userId);
+
+      if (user) {
+        setUserName(user.name);
+        setRole(user.role);
+        setFormData({
+          name: user.name,
+          email: user.email,
+          phone: user.phone || '',
+          location: user.location || '',
+          bio: user.bio || '',
+        });
+        setAvatar(user.avatar || null);
+      }
+      setLoading(false);
+    };
+    init();
   }, [router]);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -70,10 +73,7 @@ export default function ProfilePage() {
     setSaving(true);
     setSuccess(false);
 
-    // Simulate network delay
-    await new Promise(r => setTimeout(r, 800));
-
-    const updated = updateUserProfile({
+    const updated = await updateUserProfile({
       name: formData.name,
       phone: formData.phone,
       location: formData.location,
@@ -84,7 +84,6 @@ export default function ProfilePage() {
     if (updated) {
       setUserName(updated.name);
       setSuccess(true);
-      // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
     }
     setSaving(false);

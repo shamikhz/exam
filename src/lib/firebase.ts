@@ -1,23 +1,28 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDxm9RGLZjyZFLpL_xro7zpDbJ3TiJrZa4",
-  authDomain: "examtop-256af.firebaseapp.com",
-  projectId: "examtop-256af",
-  storageBucket: "examtop-256af.firebasestorage.app",
-  messagingSenderId: "911781582351",
-  appId: "1:911781582351:web:e4462e9abb8d2321efb57a",
-  measurementId: "G-JZXB4W7VHL"
+  apiKey: "AIzaSyBFDqg-zk006grE937bw4ePJxW989q22hw",
+  authDomain: "examtop-15e72.firebaseapp.com",
+  projectId: "examtop-15e72",
+  storageBucket: "examtop-15e72.firebasestorage.app",
+  messagingSenderId: "671282808439",
+  appId: "1:671282808439:web:09ae5c9e3021f252d9e872",
+  measurementId: "G-8H2CHVEC92"
 };
 
-// Initialize Firebase
+// Initialize Firebase (avoid duplicate app on hot reload)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-// Initialize Analytics conditionally to avoid SSR issues
+// Analytics: only in the browser
 let analytics = null;
 if (typeof window !== "undefined") {
   isSupported().then((supported) => {
@@ -27,4 +32,4 @@ if (typeof window !== "undefined") {
   });
 }
 
-export { app, auth, googleProvider, analytics };
+export { app, auth, googleProvider, db, storage, analytics };
