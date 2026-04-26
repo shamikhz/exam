@@ -311,6 +311,22 @@ export function loginAny(email: string, password: string): AuthState | null {
   return auth;
 }
 
+/** Login without password check for Social Auth */
+export function loginWithoutPassword(email: string): AuthState | null {
+  const users = getUsers();
+  const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  if (!user) return null;
+  const auth: AuthState = { 
+    userId: user.id, 
+    role: user.role, 
+    name: user.name, 
+    email: user.email,
+    avatar: user.avatar 
+  };
+  localStorage.setItem(KEYS.AUTH, JSON.stringify(auth));
+  return auth;
+}
+
 /** Register a new user. Returns AuthState on success or error string on failure. */
 export function register(
   name: string,

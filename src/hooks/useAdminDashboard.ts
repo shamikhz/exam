@@ -147,7 +147,19 @@ export function useAdminDashboard() {
     refreshData();
   }
 
-  function handleDeleteStudent(id: string) {
+  async function handleDeleteStudent(id: string) {
+    const userToDelete = users.find(u => u.id === id);
+    if (userToDelete) {
+      try {
+        await fetch('/api/delete-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userToDelete.email })
+        });
+      } catch (err) {
+        console.error("Failed to delete user from Firebase:", err);
+      }
+    }
     storageDeleteUser(id);
     setDeleteConfirm(null);
     refreshData();

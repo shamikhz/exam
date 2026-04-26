@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loginAny, register, getCurrentUser, seedDefaultData, getUsers, type AuthState } from '@/lib/storage';
+import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, getUsers, type AuthState } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '@/lib/firebase';
 import styles from './auth.module.css';
 
 type Mode = 'login' | 'register';
@@ -112,17 +114,78 @@ export default function AuthPage() {
 
   async function handleSocial(id: string) {
     setSocialLoading(id);
-    await new Promise((r) => setTimeout(r, 1000));
-    // For demo: auto-create/login a guest account tied to that provider
-    const email = `${id}-demo@examapp.com`;
-    const existing = loginAny(email, 'social-auth-demo');
-    if (existing) {
-      redirectByRole(existing);
-    } else {
-      const result = register(`${id.charAt(0).toUpperCase() + id.slice(1)} User`, email, 'social-auth-demo', role);
-      if (typeof result !== 'string') redirectByRole(result);
+    try {
+      if (id === 'google') {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        const userEmail = user.email || `${user.uid}@examapp.com`;
+        const userName = user.displayName || 'Google User';
+        
+        const allUsers = getUsers();
+        const userExists = allUsers.some(u => u.email.toLowerCase() === userEmail.toLowerCase());
+
+        if (mode === 'login') {
+          if (userExists) {
+            const existing = loginWithoutPassword(userEmail);
+            if (existing) redirectByRole(existing);
+          } else {
+            // New user trying to login: redirect to create account page
+            setMode('register');
+            setName(userName);
+            setEmail(userEmail);
+            setError('Account not found. Please complete the form to create your account.');
+          }
+        } else {
+          // Mode is 'register': they want to create an account with Google card
+          if (userExists) {
+            // Already have an account, just log them in
+            const existing = loginWithoutPassword(userEmail);
+            if (existing) redirectByRole(existing);
+          } else {
+            // Auto-create their account since they clicked Google on the Register tab
+            const demoPassword = `google-auth-${user.uid}`;
+            const regResult = register(userName, userEmail, demoPassword, role);
+            if (typeof regResult !== 'string') {
+              redirectByRole(regResult);
+            } else {
+              setError(regResult);
+            }
+          }
+        }
+      } else {
+        // Fallback demo for Github
+        await new Promise((r) => setTimeout(r, 1000));
+        const demoEmail = `${id}-demo@examapp.com`;
+        
+        const allUsers = getUsers();
+        const userExists = allUsers.some(u => u.email.toLowerCase() === demoEmail.toLowerCase());
+
+        if (mode === 'login') {
+          if (userExists) {
+            const existing = loginWithoutPassword(demoEmail);
+            if (existing) redirectByRole(existing);
+          } else {
+            setMode('register');
+            setName(`${id.charAt(0).toUpperCase() + id.slice(1)} User`);
+            setEmail(demoEmail);
+            setError('Account not found. Please complete the form to create your account.');
+          }
+        } else {
+          if (userExists) {
+            const existing = loginWithoutPassword(demoEmail);
+            if (existing) redirectByRole(existing);
+          } else {
+            const result = register(`${id.charAt(0).toUpperCase() + id.slice(1)} User`, demoEmail, 'social-auth-demo', role);
+            if (typeof result !== 'string') redirectByRole(result);
+          }
+        }
+      }
+    } catch (err: any) {
+      console.error("Social login error:", err);
+      setError(err.message || "Failed to sign in with provider.");
+    } finally {
+      setSocialLoading(null);
     }
-    setSocialLoading(null);
   }
 
   const fillDemo = () => {
