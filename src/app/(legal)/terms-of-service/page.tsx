@@ -20,12 +20,10 @@ export default function TermsOfServicePage() {
 
       {/* Hero */}
       <div className={styles.hero}>
-        <div className={styles.heroBadge}>📋 Legal</div>
         <h1 className={styles.heroTitle}>Terms of Service</h1>
         <p className={styles.heroSubtitle}>
           Please read these terms carefully before using ExamTop.
         </p>
-        <div className={styles.heroMeta}>📅 Last updated: April 2026</div>
       </div>
 
       {/* Content */}

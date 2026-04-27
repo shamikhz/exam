@@ -20,12 +20,10 @@ export default function PrivacyPolicyPage() {
 
       {/* Hero */}
       <div className={styles.hero}>
-        <div className={styles.heroBadge}>🔒 Legal</div>
         <h1 className={styles.heroTitle}>Privacy Policy</h1>
         <p className={styles.heroSubtitle}>
           We take your privacy seriously. Here's exactly how we handle your data.
         </p>
-        <div className={styles.heroMeta}>📅 Last updated: April 2026</div>
       </div>
 
       {/* Content */}
