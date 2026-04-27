@@ -9,7 +9,7 @@
 
 import {
   collection, doc,
-  getDocs, getDoc, setDoc, addDoc, deleteDoc, updateDoc,
+  getDocs, getDoc, setDoc, deleteDoc, updateDoc,
   query, where, writeBatch,
 } from "firebase/firestore";
 import {
@@ -190,7 +190,7 @@ export async function updateUserProfile(data: Partial<User>): Promise<AuthState 
   ) as User;
 
   // updateDoc only writes the provided keys, preserving all other stored fields
-  await updateDoc(userRef, sanitised as any);
+  await updateDoc(userRef, sanitised as Partial<User>);
 
   const updatedAuth: AuthState = {
     ...auth,

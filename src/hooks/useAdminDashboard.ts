@@ -90,7 +90,7 @@ export function useAdminDashboard() {
     }
 
     try {
-      const topicData: any = {
+      const topicData: Partial<Topic> = {
         ...topicForm,
         name: topicForm.name.trim(),
       };
@@ -98,10 +98,10 @@ export function useAdminDashboard() {
         topicData.id = editingTopic.id;
         topicData.createdAt = editingTopic.createdAt;
       }
-      await storageSaveTopic(topicData);
+      await storageSaveTopic(topicData as Topic);
       setShowTopicForm(false);
       await refreshData();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to save topic:', err);
       setTopicError('An unexpected error occurred while saving. Please try again.');
     }
@@ -130,14 +130,14 @@ export function useAdminDashboard() {
 
   async function handleQuestionSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const qData: any = {
+    const qData: Partial<Question> = {
       ...questionForm,
     };
     if (editingQuestion) {
       qData.id = editingQuestion.id;
       qData.createdAt = editingQuestion.createdAt;
     }
-    await storageSaveQuestion(qData);
+    await storageSaveQuestion(qData as Question);
     setShowQuestionForm(false);
     await refreshData();
   }
