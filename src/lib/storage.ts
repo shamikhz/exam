@@ -320,7 +320,7 @@ export async function getTopics(): Promise<Topic[]> {
   });
 }
 
-export async function saveTopic(topic: Partial<Topic> & { name: string }): Promise<void> {
+export async function saveTopic(topic: Partial<Topic> & { name: string }): Promise<Topic> {
   if (!topic.id) {
     const newDoc = doc(topicsCol());
     const fullTopic: Topic = {
@@ -329,8 +329,10 @@ export async function saveTopic(topic: Partial<Topic> & { name: string }): Promi
       createdAt: new Date().toISOString()
     };
     await setDoc(newDoc, fullTopic);
+    return fullTopic;
   } else {
     await setDoc(doc(db, 'topics', topic.id), topic as Topic);
+    return topic as Topic;
   }
 }
 
@@ -359,7 +361,7 @@ export async function getQuestionsByTopic(topicId: string): Promise<Question[]> 
   return snap.docs.map(d => d.data() as Question);
 }
 
-export async function saveQuestion(question: Partial<Question> & { topicId: string }): Promise<void> {
+export async function saveQuestion(question: Partial<Question> & { topicId: string }): Promise<Question> {
   if (!question.id) {
     const newDoc = doc(questionsCol());
     const fullQuestion: Question = {
@@ -368,8 +370,10 @@ export async function saveQuestion(question: Partial<Question> & { topicId: stri
       createdAt: new Date().toISOString()
     };
     await setDoc(newDoc, fullQuestion);
+    return fullQuestion;
   } else {
     await setDoc(doc(db, 'questions', question.id), question as Question);
+    return question as Question;
   }
 }
 
@@ -392,7 +396,7 @@ export async function getResultsByStudent(studentId: string): Promise<ExamResult
   return snap.docs.map(d => ({ ...d.data(), id: d.id } as ExamResult));
 }
 
-export async function saveResult(result: Partial<ExamResult>): Promise<void> {
+export async function saveResult(result: Partial<ExamResult>): Promise<ExamResult> {
   if (!result.id) {
     const newDoc = doc(resultsCol());
     const fullResult: ExamResult = {
@@ -401,8 +405,10 @@ export async function saveResult(result: Partial<ExamResult>): Promise<void> {
       completedAt: new Date().toISOString()
     };
     await setDoc(newDoc, fullResult);
+    return fullResult;
   } else {
     await setDoc(doc(db, 'results', result.id), result as ExamResult);
+    return result as ExamResult;
   }
 }
 

@@ -107,7 +107,7 @@ export function useExam(
     }, 0);
     const totalPoints = examQuestions.reduce((acc, q) => acc + q.points, 0);
 
-    const result: Partial<ExamResult> = {
+    const resultData: Partial<ExamResult> = {
       studentId: userId,
       topicId: examTopic.id,
       score,
@@ -116,9 +116,9 @@ export function useExam(
       timeTaken: examQuestions.length * 60 - timeLeft,
     };
 
-    await saveResult(result as ExamResult);
+    const finalResult = await saveResult(resultData);
     setExamStarted(false);
-    onExamComplete(result, examQuestions, examTopic);
+    onExamComplete(finalResult, examQuestions, examTopic);
   }, [examTopic, examQuestions, selectedAnswers, timeLeft, userId, onExamComplete]);
 
   async function startExam(topic: Topic) {
