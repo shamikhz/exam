@@ -162,14 +162,22 @@ export async function updateUserProfile(data: Partial<User>): Promise<AuthState 
   const snap = await getDoc(userRef);
   if (!snap.exists()) return null;
 
-  const updated = { ...snap.data() as User, ...data };
-  await setDoc(userRef, updated);
+  // Merge new data on top of existing doc
+  const updated: User = { ...snap.data() as User, ...data };
+
+  // Strip undefined values — Firestore rejects them and they can wipe optional fields
+  const sanitised = Object.fromEntries(
+    Object.entries(updated).filter(([, v]) => v !== undefined)
+  ) as User;
+
+  // updateDoc only writes the provided keys, preserving all other stored fields
+  await updateDoc(userRef, sanitised as Record<string, unknown>);
 
   const updatedAuth: AuthState = {
     ...auth,
-    name: updated.name,
-    email: updated.email,
-    avatar: updated.avatar,
+    name: sanitised.name,
+    email: sanitised.email,
+    avatar: sanitised.avatar,
   };
   localStorage.setItem(AUTH_KEY, JSON.stringify(updatedAuth));
   return updatedAuth;
