@@ -190,7 +190,7 @@ export async function updateUserProfile(data: Partial<User>): Promise<AuthState 
   ) as User;
 
   // updateDoc only writes the provided keys, preserving all other stored fields
-  await updateDoc(userRef, sanitised as Record<string, unknown>);
+  await updateDoc(userRef, sanitised as any);
 
   const updatedAuth: AuthState = {
     ...auth,
