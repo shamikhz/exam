@@ -44,21 +44,35 @@ export default function ContactPage() {
         {/* Contact cards */}
         <div className={styles.contactGrid}>
           <div className={styles.contactCard}>
+            <div className={styles.contactIcon}>📧</div>
+            <div className={styles.contactCardTitle}>Email Support</div>
+            <div className={styles.contactCardText}>
+              For general inquiries and support, reach us directly at:
+            </div>
+          </div>
+
+          <div className={styles.contactCard}>
             <div className={styles.contactIcon}>🔒</div>
-            <div className={styles.contactCardTitle}>Privacy &amp; Legal</div>
+            <div className={styles.contactCardTitle}>Privacy & Legal</div>
             <div className={styles.contactCardText}>
               For privacy requests, data deletion, or legal matters:
             </div>
-            <div className={styles.contactCardLink}>legal@examtop.app</div>
           </div>
 
           <div className={styles.contactCard}>
             <div className={styles.contactIcon}>🐛</div>
             <div className={styles.contactCardTitle}>Report a Bug</div>
             <div className={styles.contactCardText}>
-              Found something broken? Report issues on our GitHub repository:
+              Found something broken? Report issues on our GitHub repository.
             </div>
-            <div className={styles.contactCardLink}>github.com/shamikhz/exam</div>
+          </div>
+
+          <div className={styles.contactCard}>
+            <div className={styles.contactIcon}>⏱️</div>
+            <div className={styles.contactCardTitle}>Response Time</div>
+            <div className={styles.contactCardText}>
+              We aim to respond to all inquiries within 24–48 business hours.
+            </div>
           </div>
         </div>
 
