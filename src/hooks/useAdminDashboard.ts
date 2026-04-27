@@ -5,7 +5,6 @@ import {
   getTopics, saveTopic as storageSaveTopic, deleteTopic as storageDeleteTopic,
   getQuestions, saveQuestion as storageSaveQuestion, deleteQuestion as storageDeleteQuestion,
   getResults, getUsers, deleteUser as storageDeleteUser,
-  getNextSequentialId,
   type Topic, type Question
 } from '@/lib/storage';
 
@@ -91,15 +90,15 @@ export function useAdminDashboard() {
     }
 
     try {
-      const topic: Topic = {
-        id: editingTopic?.id || getNextSequentialId('topic', topics.map(t => t.id)),
+      const topicData: any = {
+        ...topicForm,
         name: topicForm.name.trim(),
-        description: topicForm.description,
-        icon: topicForm.icon,
-        difficulty: topicForm.difficulty,
-        createdAt: editingTopic?.createdAt || new Date().toISOString(),
       };
-      await storageSaveTopic(topic);
+      if (editingTopic) {
+        topicData.id = editingTopic.id;
+        topicData.createdAt = editingTopic.createdAt;
+      }
+      await storageSaveTopic(topicData);
       setShowTopicForm(false);
       await refreshData();
     } catch (err: any) {
@@ -131,17 +130,14 @@ export function useAdminDashboard() {
 
   async function handleQuestionSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const q: Question = {
-      id: editingQuestion?.id || getNextSequentialId('q', questions.map(q => q.id)),
-      topicId: questionForm.topicId,
-      text: questionForm.text,
-      options: questionForm.options,
-      correctAnswer: questionForm.correctAnswer,
-      explanation: questionForm.explanation,
-      points: questionForm.points,
-      createdAt: editingQuestion?.createdAt || new Date().toISOString(),
+    const qData: any = {
+      ...questionForm,
     };
-    await storageSaveQuestion(q);
+    if (editingQuestion) {
+      qData.id = editingQuestion.id;
+      qData.createdAt = editingQuestion.createdAt;
+    }
+    await storageSaveQuestion(qData);
     setShowQuestionForm(false);
     await refreshData();
   }

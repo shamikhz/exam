@@ -8,7 +8,6 @@ import {
   deleteResult as storageDeleteResult,
   getQuestionsByTopic,
   saveResult,
-  getNextSequentialId,
   type Topic,
   type ExamResult,
   type Question
@@ -108,19 +107,16 @@ export function useExam(
     }, 0);
     const totalPoints = examQuestions.reduce((acc, q) => acc + q.points, 0);
 
-    const allResults = await getResults();
-    const result: ExamResult = {
-      id: getNextSequentialId('result', allResults.map(r => r.id)),
+    const result: Partial<ExamResult> = {
       studentId: userId,
       topicId: examTopic.id,
       score,
       totalPoints,
       answers: selectedAnswers,
       timeTaken: examQuestions.length * 60 - timeLeft,
-      completedAt: new Date().toISOString(),
     };
 
-    await saveResult(result);
+    await saveResult(result as ExamResult);
     setExamStarted(false);
     onExamComplete(result, examQuestions, examTopic);
   }, [examTopic, examQuestions, selectedAnswers, timeLeft, userId, onExamComplete]);

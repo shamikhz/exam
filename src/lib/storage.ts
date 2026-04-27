@@ -257,14 +257,10 @@ export async function register(
   const snap = await getDocs(q);
   if (!snap.empty) return 'An account with this email already exists.';
 
-  // Get all users to calculate next sequential ID
-  const allUsersSnap = await getDocs(usersCol());
-  const allUsers = allUsersSnap.docs.map(d => d.data() as User);
-  const nextId = getNextSequentialId(role, allUsers.map(u => u.id));
-
   // Create account in Firebase Auth for ALL roles
+  let userCredential;
   try {
-    await createUserWithEmailAndPassword(auth, normalised, password);
+    userCredential = await createUserWithEmailAndPassword(auth, normalised, password);
   } catch (err: unknown) {
     const code = (err as { code?: string }).code;
     if (code === 'auth/email-already-in-use') {
@@ -273,9 +269,9 @@ export async function register(
     return 'Failed to create account. Please try again.';
   }
 
-  // Store profile in Firestore — password is managed by Firebase Auth, not stored here
+  // Store profile in Firestore — use the Firebase Auth UID as the document ID
   const newUser: User = {
-    id: nextId,
+    id: userCredential.user.uid,
     name: name.trim(),
     email: normalised,
     role,
@@ -324,8 +320,18 @@ export async function getTopics(): Promise<Topic[]> {
   });
 }
 
-export async function saveTopic(topic: Topic): Promise<void> {
-  await setDoc(doc(db, 'topics', topic.id), topic);
+export async function saveTopic(topic: Partial<Topic> & { name: string }): Promise<void> {
+  if (!topic.id) {
+    const newDoc = doc(topicsCol());
+    const fullTopic: Topic = {
+      ...topic as Topic,
+      id: newDoc.id,
+      createdAt: new Date().toISOString()
+    };
+    await setDoc(newDoc, fullTopic);
+  } else {
+    await setDoc(doc(db, 'topics', topic.id), topic as Topic);
+  }
 }
 
 export async function deleteTopic(id: string): Promise<void> {
@@ -353,8 +359,18 @@ export async function getQuestionsByTopic(topicId: string): Promise<Question[]> 
   return snap.docs.map(d => d.data() as Question);
 }
 
-export async function saveQuestion(question: Question): Promise<void> {
-  await setDoc(doc(db, 'questions', question.id), question);
+export async function saveQuestion(question: Partial<Question> & { topicId: string }): Promise<void> {
+  if (!question.id) {
+    const newDoc = doc(questionsCol());
+    const fullQuestion: Question = {
+      ...question as Question,
+      id: newDoc.id,
+      createdAt: new Date().toISOString()
+    };
+    await setDoc(newDoc, fullQuestion);
+  } else {
+    await setDoc(doc(db, 'questions', question.id), question as Question);
+  }
 }
 
 export async function deleteQuestion(id: string): Promise<void> {
@@ -376,13 +392,17 @@ export async function getResultsByStudent(studentId: string): Promise<ExamResult
   return snap.docs.map(d => ({ ...d.data(), id: d.id } as ExamResult));
 }
 
-export async function saveResult(result: ExamResult): Promise<void> {
-  // Use result.id as document id if provided, else let Firestore generate
-  if (result.id) {
-    await setDoc(doc(db, 'results', result.id), result);
+export async function saveResult(result: Partial<ExamResult>): Promise<void> {
+  if (!result.id) {
+    const newDoc = doc(resultsCol());
+    const fullResult: ExamResult = {
+      ...result as ExamResult,
+      id: newDoc.id,
+      completedAt: new Date().toISOString()
+    };
+    await setDoc(newDoc, fullResult);
   } else {
-    const ref = await addDoc(resultsCol(), result);
-    result.id = ref.id;
+    await setDoc(doc(db, 'results', result.id), result as ExamResult);
   }
 }
 
@@ -394,24 +414,5 @@ export async function deleteResult(id: string): Promise<void> {
 // HELPERS
 // ============================
 
-/**
- * Generates a sequential ID (serial number) based on existing IDs.
- * Example: if existing are [topic-1, topic-2], returns topic-3.
- */
-export function getNextSequentialId(prefix: string, existingIds: string[]): string {
-  const numbers = existingIds
-    .filter(id => id.startsWith(`${prefix}-`))
-    .map(id => {
-      const parts = id.split('-');
-      return parseInt(parts[parts.length - 1]);
-    })
-    .filter(n => !isNaN(n));
+// (getNextSequentialId removed for production scalability)
 
-  const nextNum = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
-  return `${prefix}-${nextNum}`;
-}
-
-/** @deprecated Use getNextSequentialId instead where possible */
-export function generateId(prefix: string): string {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
-}
