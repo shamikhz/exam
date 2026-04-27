@@ -44,14 +44,13 @@
 .navLogo {
   font-size: 1.5rem;
 }
-
 .navTextWrapper {
   display: flex;
   flex-direction: column;
 }
 
 .navTitle {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--color-text);
   letter-spacing: -0.5px;
@@ -59,7 +58,7 @@
 }
 
 .navTagline {
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-style: italic;
   font-weight: 600;
   color: var(--color-accent);

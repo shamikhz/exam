@@ -51,7 +51,7 @@
 }
 
 .sidebarBrandText {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--color-text);
   line-height: 1;
@@ -63,7 +63,7 @@
 }
 
 .sidebarTagline {
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   font-style: italic;
   font-weight: 600;
   color: var(--color-accent);

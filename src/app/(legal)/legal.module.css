@@ -40,7 +40,7 @@
 }
 
 .navBrandText {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: var(--color-text);
   letter-spacing: -0.5px;
@@ -48,7 +48,7 @@
 }
 
 .navTagline {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-style: italic;
   font-weight: 600;
   color: var(--color-accent);

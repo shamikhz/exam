@@ -28,7 +28,7 @@
 
 .logo { font-size: 1.6rem; }
 .logoText {
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: var(--color-text);
   line-height: 1;
@@ -40,7 +40,7 @@
 }
 
 .logoTagline {
-  font-size: 0.55rem;
+  font-size: 0.7rem;
   font-style: italic;
   font-weight: 600;
   color: var(--color-accent);
