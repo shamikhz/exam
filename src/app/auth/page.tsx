@@ -37,8 +37,13 @@ export default function AuthPage() {
 
   useEffect(() => {
     const init = async () => {
-      await seedDefaultData();
-      setSeeding(false);
+      try {
+        await seedDefaultData();
+      } catch (err) {
+        console.error("Failed to seed data (could be due to strict Firestore rules):", err);
+      } finally {
+        setSeeding(false);
+      }
       const user = getCurrentUser();
       if (user) {
         router.replace(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
