@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, getUsers, type AuthState } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
 import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
+import { auth, googleProvider, githubProvider } from '@/lib/firebase';
 import styles from './auth.module.css';
 
 type Mode = 'login' | 'register';
@@ -153,30 +153,34 @@ export default function AuthPage() {
           }
         }
       } else {
-        // GitHub (demo fallback)
-        await new Promise((r) => setTimeout(r, 1000));
-        const demoEmail = `${id}-demo@examapp.com`;
+        // Real GitHub Sign-In
+        const result = await signInWithPopup(auth, githubProvider);
+        const user = result.user;
+        const userEmail = user.email || `github-${user.uid}@examapp.com`;
+        const userName = user.displayName || user.email?.split('@')[0] || 'GitHub User';
 
         const allUsers = await getUsers();
-        const userExists = allUsers.some(u => u.email.toLowerCase() === demoEmail.toLowerCase());
+        const userExists = allUsers.some(u => u.email.toLowerCase() === userEmail.toLowerCase());
 
         if (mode === 'login') {
           if (userExists) {
-            const existing = await loginWithoutPassword(demoEmail);
+            const existing = await loginWithoutPassword(userEmail);
             if (existing) redirectByRole(existing);
           } else {
             setMode('register');
-            setName(`${id.charAt(0).toUpperCase() + id.slice(1)} User`);
-            setEmail(demoEmail);
+            setName(userName);
+            setEmail(userEmail);
             setError('Account not found. Please complete the form to create your account.');
           }
         } else {
           if (userExists) {
-            const existing = await loginWithoutPassword(demoEmail);
+            const existing = await loginWithoutPassword(userEmail);
             if (existing) redirectByRole(existing);
           } else {
-            const result = await register(`${id.charAt(0).toUpperCase() + id.slice(1)} User`, demoEmail, 'social-auth-demo', role);
+            const demoPassword = `github-auth-${user.uid}`;
+            const result = await register(userName, userEmail, demoPassword, role);
             if (typeof result !== 'string') redirectByRole(result);
+            else setError(result);
           }
         }
       }
