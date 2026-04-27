@@ -45,9 +45,9 @@ export default function ContactPage() {
         <div className={styles.contactGrid}>
           <div className={styles.contactCard}>
             <div className={styles.contactIcon}>📧</div>
-            <div className={styles.contactCardTitle}>Email Support</div>
+            <div className={styles.contactCardTitle}>General Support</div>
             <div className={styles.contactCardText}>
-              For general inquiries and support, reach us directly at:
+              Have a question or need help getting started? Drop us a message and our team will be happy to assist you.
             </div>
           </div>
 
@@ -55,7 +55,7 @@ export default function ContactPage() {
             <div className={styles.contactIcon}>🔒</div>
             <div className={styles.contactCardTitle}>Privacy & Legal</div>
             <div className={styles.contactCardText}>
-              For privacy requests, data deletion, or legal matters:
+              Need to request data deletion, report a privacy concern, or ask about our legal policies? We take these seriously.
             </div>
           </div>
 
@@ -63,7 +63,7 @@ export default function ContactPage() {
             <div className={styles.contactIcon}>🐛</div>
             <div className={styles.contactCardTitle}>Report a Bug</div>
             <div className={styles.contactCardText}>
-              Found something broken? Report issues on our GitHub repository.
+              Spotted something that isn't working right? Let us know and we'll get it fixed as quickly as possible.
             </div>
           </div>
 
@@ -71,7 +71,7 @@ export default function ContactPage() {
             <div className={styles.contactIcon}>⏱️</div>
             <div className={styles.contactCardTitle}>Response Time</div>
             <div className={styles.contactCardText}>
-              We aim to respond to all inquiries within 24–48 business hours.
+              We read every message and aim to reply within 24 to 48 hours on business days.
             </div>
           </div>
         </div>
