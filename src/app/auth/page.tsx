@@ -224,7 +224,10 @@ export default function AuthPage() {
       <div className={styles.topBar}>
         <Link href="/" className={styles.logo}>
           <span className={styles.logoIcon}>⚡</span>
-          <span className={styles.logoText}>OptimaPath</span>
+          <div className={styles.logoTextWrapper}>
+            <span className={styles.logoText}>OptimaPath</span>
+            <span className={styles.logoTagline}>the best path</span>
+          </div>
         </Link>
         <button id="auth-theme-toggle" onClick={toggleTheme} className={styles.themeBtn} aria-label="Toggle theme">
           {theme === 'dark' ? '☀️' : '🌙'}

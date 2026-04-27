@@ -13,7 +13,11 @@ export default function TermsOfServicePage() {
       {/* Navbar */}
       <nav className={styles.navbar}>
         <Link href="/" className={styles.navBrand}>
-          <span className={styles.navBrandIcon}>⚡</span> OptimaPath
+          <span className={styles.navBrandIcon}>⚡</span>
+          <div className={styles.navTextWrapper}>
+            <span className={styles.navBrandText}>OptimaPath</span>
+            <span className={styles.navTagline}>the best path</span>
+          </div>
         </Link>
         <Link href="/" className={styles.backBtn}>← Back to Home</Link>
       </nav>

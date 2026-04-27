@@ -70,6 +70,22 @@
   font-weight: 800;
   color: var(--color-text);
   letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.logoTextWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.logoTagline {
+  font-size: 0.6rem;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--color-accent);
+  letter-spacing: 0.5px;
+  margin-top: -2px;
+  opacity: 0.9;
 }
 
 .themeBtn {

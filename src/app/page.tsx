@@ -37,7 +37,10 @@ export default function LandingPage() {
       <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ''}`}>
         <div className={styles.navBrand}>
           <span className={styles.navLogo}>⚡</span>
-          <span className={styles.navTitle}>OptimaPath</span>
+          <div className={styles.navTextWrapper}>
+            <span className={styles.navTitle}>OptimaPath</span>
+            <span className={styles.navTagline}>the best path</span>
+          </div>
         </div>
         <div className={styles.navActions}>
           <button
