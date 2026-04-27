@@ -53,9 +53,16 @@ export default function AuthPage() {
 
     const searchParams = new URLSearchParams(window.location.search);
     const initialRole = searchParams.get('role');
+    const initialMode = searchParams.get('mode');
+
     if (initialRole === 'admin') {
       setRole('admin');
       setMode('login');
+    } else if (initialMode === 'register') {
+      setMode('register');
+      if (initialRole === 'student' || !initialRole) {
+        setRole('student');
+      }
     }
   }, [router]);
 

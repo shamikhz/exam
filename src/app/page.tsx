@@ -49,7 +49,7 @@ export default function LandingPage() {
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
           <Link href="/auth" id="nav-signin" className={styles.navBtnSecondary}>Sign In</Link>
-          <Link href="/auth" id="nav-getstarted" className={styles.navBtnPrimary}>Get Started →</Link>
+          <Link href="/auth?mode=register" id="nav-getstarted" className={styles.navBtnPrimary}>Get Started →</Link>
         </div>
       </nav>
 
@@ -67,7 +67,7 @@ export default function LandingPage() {
             Create, manage, and take exams with confidence — anytime, anywhere.
           </p>
           <div className={styles.heroCTA}>
-            <Link href="/auth" id="hero-student-cta" className={styles.heroBtnPrimary}>
+            <Link href="/auth?mode=register" id="hero-student-cta" className={styles.heroBtnPrimary}>
               🎓 Get Started Free
             </Link>
             <Link href="/auth" id="hero-admin-cta" className={styles.heroBtnOutline}>
@@ -149,7 +149,7 @@ export default function LandingPage() {
             <li>✅ Review answers with explanations</li>
             <li>✅ Track your progress over time</li>
           </ul>
-          <Link href="/auth" className={styles.panelBtn} id="panel-student-btn">
+          <Link href="/auth?mode=register" className={styles.panelBtn} id="panel-student-btn">
             Get Started →
           </Link>
         </div>
