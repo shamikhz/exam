@@ -23,7 +23,7 @@ export function Sidebar({
     <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : ''}`}>
       <div className={styles.sidebarBrand}>
         <span>⚙️</span>
-        <span className={styles.sidebarBrandText}>ExamTop Admin</span>
+        <span className={styles.sidebarBrandText}>OptimaPath Admin</span>
       </div>
 
       <nav className={styles.sidebarNav}>

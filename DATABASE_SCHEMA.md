@@ -1,4 +1,4 @@
-# ExamTop — Firestore Database Schema
+# OptimaPath — Firestore Database Schema
 
 > **Backend:** Firebase Firestore (NoSQL)
 > **Storage:** Firebase Storage (for avatar/icon images)

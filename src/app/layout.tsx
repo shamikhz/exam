@@ -4,15 +4,15 @@ import { ThemeProvider } from '@/lib/ThemeProvider';
 
 export const metadata: Metadata = {
   title: {
-    default: 'ExamTop — Online Exam Platform',
-    template: '%s | ExamTop',
+    default: 'OptimaPath — Online Exam Platform',
+    template: '%s | OptimaPath',
   },
   description:
-    'ExamTop is a modern online examination platform for students and administrators. Manage topics, questions, and track performance with ease.',
+    'OptimaPath is a modern online examination platform for students and administrators. Manage topics, questions, and track performance with ease.',
   keywords: ['online exam', 'quiz platform', 'student assessment', 'e-learning', 'exam management'],
-  authors: [{ name: 'ExamTop Team' }],
+  authors: [{ name: 'OptimaPath Team' }],
   openGraph: {
-    title: 'ExamTop — Online Exam Platform',
+    title: 'OptimaPath — Online Exam Platform',
     description: 'A modern online examination platform for students and administrators.',
     type: 'website',
   },

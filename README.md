@@ -16,7 +16,7 @@ bun dev
 
 
 
-link-https://examtop.netlify.app/
+link-https://optimapath.netlify.app/
 
 ## Deploy on Vercel
 

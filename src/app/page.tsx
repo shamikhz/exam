@@ -37,7 +37,7 @@ export default function LandingPage() {
       <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ''}`}>
         <div className={styles.navBrand}>
           <span className={styles.navLogo}>⚡</span>
-          <span className={styles.navTitle}>ExamTop</span>
+          <span className={styles.navTitle}>OptimaPath</span>
         </div>
         <div className={styles.navActions}>
           <button
@@ -118,7 +118,7 @@ export default function LandingPage() {
       {/* ---- Features ---- */}
       <section className={styles.features} id="features">
         <div className={styles.sectionHeader}>
-          <span className={styles.sectionBadge}>Why ExamTop?</span>
+          <span className={styles.sectionBadge}>Why OptimaPath?</span>
           <h2 className={styles.sectionTitle}>Everything you need to run great exams</h2>
           <p className={styles.sectionSubtitle}>
             Purpose-built tools for admins and students — from question creation to final results.
@@ -177,9 +177,9 @@ export default function LandingPage() {
         <div className={styles.footerBrand}>
           <div className={styles.footerLogoContainer}>
             <span className={styles.footerLogo}>⚡</span>
-            <span className={styles.footerTitle}>ExamTop</span>
+            <span className={styles.footerTitle}>OptimaPath</span>
           </div>
-          <p className={styles.footerText}>© 2026 ExamTop. All rights reserved.</p>
+          <p className={styles.footerText}>© 2026 OptimaPath. All rights reserved.</p>
         </div>
 
         {/* 

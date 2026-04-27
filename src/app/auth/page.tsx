@@ -207,7 +207,7 @@ export default function AuthPage() {
       <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div className={styles.spinner} style={{ margin: '0 auto 1rem' }} />
-          <p style={{ opacity: 0.7 }}>Loading ExamTop...</p>
+          <p style={{ opacity: 0.7 }}>Loading OptimaPath...</p>
         </div>
       </div>
     );
@@ -224,7 +224,7 @@ export default function AuthPage() {
       <div className={styles.topBar}>
         <Link href="/" className={styles.logo}>
           <span className={styles.logoIcon}>⚡</span>
-          <span className={styles.logoText}>ExamTop</span>
+          <span className={styles.logoText}>OptimaPath</span>
         </Link>
         <button id="auth-theme-toggle" onClick={toggleTheme} className={styles.themeBtn} aria-label="Toggle theme">
           {theme === 'dark' ? '☀️' : '🌙'}
@@ -253,7 +253,7 @@ export default function AuthPage() {
               <div className={styles.testimonialAvatar}>👩‍💻</div>
               <div className={styles.testimonialBody}>
                 <p className={styles.testimonialText}>
-                  "ExamTop helped me pass my certification exam on the first try. The explanations are incredible!"
+                  "OptimaPath helped me pass my certification exam on the first try. The explanations are incredible!"
                 </p>
                 <div className={styles.testimonialAuthor}>Sarah K. — Software Engineer</div>
               </div>

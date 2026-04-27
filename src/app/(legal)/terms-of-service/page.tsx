@@ -3,8 +3,8 @@ import Link from 'next/link';
 import styles from '../legal.module.css';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — ExamTop',
-  description: 'Read the terms and conditions governing your use of the ExamTop platform.',
+  title: 'Terms of Service — OptimaPath',
+  description: 'Read the terms and conditions governing your use of the OptimaPath platform.',
 };
 
 export default function TermsOfServicePage() {
@@ -13,7 +13,7 @@ export default function TermsOfServicePage() {
       {/* Navbar */}
       <nav className={styles.navbar}>
         <Link href="/" className={styles.navBrand}>
-          <span className={styles.navBrandIcon}>⚡</span> ExamTop
+          <span className={styles.navBrandIcon}>⚡</span> OptimaPath
         </Link>
         <Link href="/" className={styles.backBtn}>← Back to Home</Link>
       </nav>
@@ -22,7 +22,7 @@ export default function TermsOfServicePage() {
       <div className={styles.hero}>
         <h1 className={styles.heroTitle}>Terms of Service</h1>
         <p className={styles.heroSubtitle}>
-          Please read these terms carefully before using ExamTop.
+          Please read these terms carefully before using OptimaPath.
         </p>
       </div>
 
@@ -32,7 +32,7 @@ export default function TermsOfServicePage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>1. Acceptance of Terms</h2>
           <p className={styles.sectionText}>
-            By accessing or using ExamTop ("the Platform"), you agree to be bound by these Terms of Service. 
+            By accessing or using OptimaPath ("the Platform"), you agree to be bound by these Terms of Service. 
             If you do not agree to these terms, please do not use the platform. These terms apply to all 
             visitors, students, and administrators.
           </p>
@@ -43,7 +43,7 @@ export default function TermsOfServicePage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>2. Use of the Platform</h2>
           <p className={styles.sectionText}>
-            You agree to use ExamTop only for its intended educational purposes. You must not:
+            You agree to use OptimaPath only for its intended educational purposes. You must not:
           </p>
           <ul className={styles.sectionList}>
             <li>Attempt to access another user's account or data without authorization.</li>
@@ -71,7 +71,7 @@ export default function TermsOfServicePage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>4. Administrator Responsibilities</h2>
           <p className={styles.sectionText}>
-            Administrators who use ExamTop to manage students and create content are responsible for:
+            Administrators who use OptimaPath to manage students and create content are responsible for:
           </p>
           <ul className={styles.sectionList}>
             <li>Ensuring the accuracy and appropriateness of all exam content created on the platform.</li>
@@ -86,10 +86,10 @@ export default function TermsOfServicePage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>5. Intellectual Property</h2>
           <p className={styles.sectionText}>
-            All content on the ExamTop platform — including the UI design, branding, default question sets, 
-            and platform code — is the intellectual property of ExamTop and its developers. 
+            All content on the OptimaPath platform — including the UI design, branding, default question sets, 
+            and platform code — is the intellectual property of OptimaPath and its developers. 
             Content created by administrators (topics, questions) remains the property of the respective 
-            administrator or institution. You grant ExamTop a non-exclusive licence to store and display 
+            administrator or institution. You grant OptimaPath a non-exclusive licence to store and display 
             your content for platform operation purposes.
           </p>
         </div>
@@ -99,7 +99,7 @@ export default function TermsOfServicePage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>6. Disclaimer of Warranties</h2>
           <p className={styles.sectionText}>
-            ExamTop is provided "as is" without warranties of any kind. While we strive for 100% uptime 
+            OptimaPath is provided "as is" without warranties of any kind. While we strive for 100% uptime 
             and data integrity, we cannot guarantee uninterrupted access to the platform. We are not liable 
             for any data loss, exam disruption, or damages resulting from technical failures, third-party 
             service outages (such as Firebase), or misuse of the platform.
@@ -124,7 +124,7 @@ export default function TermsOfServicePage() {
           <p className={styles.sectionText}>
             For questions regarding these Terms of Service, please visit our{' '}
             <Link href="/contact" style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Contact Us</Link>{' '}
-            page or email <strong>legal@examtop.app</strong>.
+            page or email <strong>legal@optimapath.app</strong>.
           </p>
         </div>
       </div>
@@ -136,7 +136,7 @@ export default function TermsOfServicePage() {
           <Link href="/terms-of-service">Terms of Service</Link>
           <Link href="/contact">Contact Us</Link>
         </div>
-        <p className={styles.footerCopy}>© 2026 ExamTop. All rights reserved.</p>
+        <p className={styles.footerCopy}>© 2026 OptimaPath. All rights reserved.</p>
       </footer>
     </div>
   );

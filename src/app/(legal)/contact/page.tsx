@@ -24,7 +24,7 @@ export default function ContactPage() {
       {/* Navbar */}
       <nav className={styles.navbar}>
         <Link href="/" className={styles.navBrand}>
-          <span className={styles.navBrandIcon}>⚡</span> ExamTop
+          <span className={styles.navBrandIcon}>⚡</span> OptimaPath
         </Link>
         <Link href="/" className={styles.backBtn}>← Back to Home</Link>
       </nav>
@@ -153,7 +153,7 @@ export default function ContactPage() {
           <Link href="/terms-of-service">Terms of Service</Link>
           <Link href="/contact">Contact Us</Link>
         </div>
-        <p className={styles.footerCopy}>© 2026 ExamTop. All rights reserved.</p>
+        <p className={styles.footerCopy}>© 2026 OptimaPath. All rights reserved.</p>
       </footer>
     </div>
   );

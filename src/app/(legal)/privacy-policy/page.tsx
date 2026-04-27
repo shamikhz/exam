@@ -3,8 +3,8 @@ import Link from 'next/link';
 import styles from '../legal.module.css';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — ExamTop',
-  description: 'Learn how ExamTop collects, uses, and protects your personal information.',
+  title: 'Privacy Policy — OptimaPath',
+  description: 'Learn how OptimaPath collects, uses, and protects your personal information.',
 };
 
 export default function PrivacyPolicyPage() {
@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
       {/* Navbar */}
       <nav className={styles.navbar}>
         <Link href="/" className={styles.navBrand}>
-          <span className={styles.navBrandIcon}>⚡</span> ExamTop
+          <span className={styles.navBrandIcon}>⚡</span> OptimaPath
         </Link>
         <Link href="/" className={styles.backBtn}>← Back to Home</Link>
       </nav>
@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>1. Information We Collect</h2>
           <p className={styles.sectionText}>
-            When you use ExamTop, we may collect the following types of information:
+            When you use OptimaPath, we may collect the following types of information:
           </p>
           <ul className={styles.sectionList}>
             <li><strong>Account information</strong> — your name and email address when you register.</li>
@@ -47,7 +47,7 @@ export default function PrivacyPolicyPage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>2. How We Use Your Information</h2>
           <p className={styles.sectionText}>
-            Your information is used solely to provide and improve the ExamTop experience:
+            Your information is used solely to provide and improve the OptimaPath experience:
           </p>
           <ul className={styles.sectionList}>
             <li>To create and manage your personal account.</li>
@@ -90,7 +90,7 @@ export default function PrivacyPolicyPage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>5. Cookies</h2>
           <p className={styles.sectionText}>
-            ExamTop uses minimal cookies and browser localStorage to maintain your login session. 
+            OptimaPath uses minimal cookies and browser localStorage to maintain your login session. 
             We do not use tracking cookies or third-party advertising cookies. You can clear your 
             session at any time by signing out or clearing your browser data.
           </p>
@@ -118,7 +118,7 @@ export default function PrivacyPolicyPage() {
           <p className={styles.sectionText}>
             If you have any questions about this Privacy Policy or how your data is handled, 
             please reach out via our <Link href="/contact" style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Contact Us</Link> page 
-            or email us directly at <strong>privacy@examtop.app</strong>.
+            or email us directly at <strong>privacy@optimapath.app</strong>.
           </p>
         </div>
       </div>
@@ -130,7 +130,7 @@ export default function PrivacyPolicyPage() {
           <Link href="/terms-of-service">Terms of Service</Link>
           <Link href="/contact">Contact Us</Link>
         </div>
-        <p className={styles.footerCopy}>© 2026 ExamTop. All rights reserved.</p>
+        <p className={styles.footerCopy}>© 2026 OptimaPath. All rights reserved.</p>
       </footer>
     </div>
   );
