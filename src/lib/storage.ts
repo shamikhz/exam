@@ -85,44 +85,41 @@ const resultsCol = () => collection(db, 'results');
 export async function seedDefaultData(): Promise<void> {
   if (typeof window === 'undefined') return;
 
-  const snap = await getDocs(usersCol());
-  if (!snap.empty) return; // already seeded
+  // Always ensure demo Firebase Auth accounts exist — even if Firestore is already seeded.
+  // These calls are safe to run every time: they silently skip if the account already exists.
+  const demoAccounts = [
+    { email: 'admin@examapp.com',   password: 'admin123'   },
+    { email: 'student@examapp.com', password: 'student123' },
+  ];
+  for (const { email, password } of demoAccounts) {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch {
+      // auth/email-already-in-use → already in Firebase Auth, nothing to do
+    }
+  }
 
-  // Seed admin — profile in Firestore, credentials in Firebase Auth
-  const adminUser: User = {
+  // Seed Firestore only once
+  const snap = await getDocs(usersCol());
+  if (!snap.empty) return;
+
+  // Admin profile
+  await setDoc(doc(db, 'users', 'admin-001'), {
     id: 'admin-001',
     name: 'Admin User',
     email: 'admin@examapp.com',
-    // No password stored in Firestore — Firebase Auth handles it
     role: 'admin',
     createdAt: new Date().toISOString(),
-  };
-  await setDoc(doc(db, 'users', adminUser.id), adminUser);
+  } as User);
 
-  // Register admin in Firebase Auth
-  try {
-    await createUserWithEmailAndPassword(auth, 'admin@examapp.com', 'admin123');
-  } catch {
-    // Already exists in Firebase Auth — safe to ignore
-  }
-
-  // Seed demo student — profile in Firestore, credentials in Firebase Auth
-  const demoStudent: User = {
+  // Demo student profile
+  await setDoc(doc(db, 'users', 'student-001'), {
     id: 'student-001',
     name: 'John Student',
     email: 'student@examapp.com',
-    // No password stored in Firestore
     role: 'student',
     createdAt: new Date().toISOString(),
-  };
-  await setDoc(doc(db, 'users', demoStudent.id), demoStudent);
-
-  // Register demo student in Firebase Auth
-  try {
-    await createUserWithEmailAndPassword(auth, 'student@examapp.com', 'student123');
-  } catch {
-    // Already exists in Firebase Auth — safe to ignore
-  }
+  } as User);
 
   // Seed topics
   const defaultTopics: Topic[] = [
