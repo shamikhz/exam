@@ -88,18 +88,24 @@ export default function AuthPage() {
     setLoading(true);
 
     if (mode === 'login') {
-      const allUsers = await getUsers();
-      const userExists = allUsers.some(u => u.email === email.trim().toLowerCase());
-
-      if (!userExists) {
-        setError('No account found with this email. Please check for typos or create a new account.');
-        setLoading(false);
-        return;
+      if (role === 'admin') {
+        // Admin login: checked against Firestore
+        const allUsers = await getUsers();
+        const userExists = allUsers.some(u => u.email === email.trim().toLowerCase());
+        if (!userExists) {
+          setError('No admin account found with this email.');
+          setLoading(false);
+          return;
+        }
       }
 
       const result = await loginAny(email.trim().toLowerCase(), password);
       if (!result) {
-        setError('Incorrect password. Please try again.');
+        setError(
+          role === 'admin'
+            ? 'Incorrect password. Please try again.'
+            : 'Incorrect email or password. Please try again.'
+        );
         setLoading(false);
         return;
       }

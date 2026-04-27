@@ -12,14 +12,18 @@ import {
   getDocs, getDoc, setDoc, addDoc, deleteDoc, updateDoc,
   query, where, writeBatch,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { db, auth } from "@/lib/firebase";
 
 // ---- Types ----
 export interface User {
   id: string;
   name: string;
   email: string;
-  password: string;
+  password?: string; // Only stored for admin; students use Firebase Auth
   role: 'admin' | 'student';
   createdAt: string;
   bio?: string;
@@ -84,7 +88,7 @@ export async function seedDefaultData(): Promise<void> {
   const snap = await getDocs(usersCol());
   if (!snap.empty) return; // already seeded
 
-  // Seed admin (credentials NEVER change)
+  // Seed admin — stays Firestore-only with password (never uses Firebase Auth)
   const adminUser: User = {
     id: 'admin-001',
     name: 'Admin User',
@@ -95,16 +99,23 @@ export async function seedDefaultData(): Promise<void> {
   };
   await setDoc(doc(db, 'users', adminUser.id), adminUser);
 
-  // Seed demo student
+  // Seed demo student — create in Firebase Auth AND Firestore
   const demoStudent: User = {
     id: 'student-001',
     name: 'John Student',
     email: 'student@examapp.com',
-    password: 'student123',
+    // No password stored in Firestore for students
     role: 'student',
     createdAt: new Date().toISOString(),
   };
   await setDoc(doc(db, 'users', demoStudent.id), demoStudent);
+
+  // Register demo student in Firebase Auth so they can log in
+  try {
+    await createUserWithEmailAndPassword(auth, 'student@examapp.com', 'student123');
+  } catch {
+    // Already exists in Firebase Auth — safe to ignore
+  }
 
   // Seed topics
   const defaultTopics: Topic[] = [
@@ -188,12 +199,34 @@ export async function updateUserProfile(data: Partial<User>): Promise<AuthState 
 // ============================
 
 export async function loginAny(email: string, password: string): Promise<AuthState | null> {
-  const q = query(usersCol(), where('email', '==', email.toLowerCase().trim()));
+  const normalised = email.toLowerCase().trim();
+
+  // Fetch Firestore profile first to determine role
+  const q = query(usersCol(), where('email', '==', normalised));
   const snap = await getDocs(q);
   if (snap.empty) return null;
+
   const user = snap.docs[0].data() as User;
-  if (user.password !== password) return null;
-  const authState: AuthState = { userId: user.id, role: user.role, name: user.name, email: user.email, avatar: user.avatar };
+
+  if (user.role === 'admin') {
+    // Admin: compare plaintext password stored in Firestore (never in Firebase Auth)
+    if (user.password !== password) return null;
+  } else {
+    // Student: authenticate via Firebase Auth
+    try {
+      await signInWithEmailAndPassword(auth, normalised, password);
+    } catch {
+      return null; // Wrong password or account not found in Firebase Auth
+    }
+  }
+
+  const authState: AuthState = {
+    userId: user.id,
+    role: user.role,
+    name: user.name,
+    email: user.email,
+    avatar: user.avatar,
+  };
   localStorage.setItem(AUTH_KEY, JSON.stringify(authState));
   return authState;
 }
@@ -214,21 +247,44 @@ export async function register(
   password: string,
   role: 'admin' | 'student'
 ): Promise<AuthState | string> {
-  const q = query(usersCol(), where('email', '==', email.toLowerCase().trim()));
+  const normalised = email.toLowerCase().trim();
+
+  // Check Firestore for existing profile
+  const q = query(usersCol(), where('email', '==', normalised));
   const snap = await getDocs(q);
   if (!snap.empty) return 'An account with this email already exists.';
 
+  if (role === 'student') {
+    // Create account in Firebase Auth first
+    try {
+      await createUserWithEmailAndPassword(auth, normalised, password);
+    } catch (err: unknown) {
+      const code = (err as { code?: string }).code;
+      if (code === 'auth/email-already-in-use') {
+        return 'An account with this email already exists.';
+      }
+      return 'Failed to create account. Please try again.';
+    }
+  }
+
+  // Store profile in Firestore — no password for students
   const newUser: User = {
     id: generateId(role),
     name: name.trim(),
-    email: email.toLowerCase().trim(),
-    password,
+    email: normalised,
+    ...(role === 'admin' ? { password } : {}), // Only admin stores password
     role,
     createdAt: new Date().toISOString(),
   };
   await setDoc(doc(db, 'users', newUser.id), newUser);
 
-  const authState: AuthState = { userId: newUser.id, role: newUser.role, name: newUser.name, email: newUser.email, avatar: newUser.avatar };
+  const authState: AuthState = {
+    userId: newUser.id,
+    role: newUser.role,
+    name: newUser.name,
+    email: newUser.email,
+    avatar: newUser.avatar,
+  };
   localStorage.setItem(AUTH_KEY, JSON.stringify(authState));
   return authState;
 }
