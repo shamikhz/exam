@@ -3,11 +3,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   getTopics,
+  getResults,
   getResultsByStudent,
   deleteResult as storageDeleteResult,
   getQuestionsByTopic,
   saveResult,
-  generateId,
+  getNextSequentialId,
   type Topic,
   type ExamResult,
   type Question
@@ -107,8 +108,9 @@ export function useExam(
     }, 0);
     const totalPoints = examQuestions.reduce((acc, q) => acc + q.points, 0);
 
+    const allResults = await getResults();
     const result: ExamResult = {
-      id: generateId('result'),
+      id: getNextSequentialId('result', allResults.map(r => r.id)),
       studentId: userId,
       topicId: examTopic.id,
       score,

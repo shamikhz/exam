@@ -105,8 +105,8 @@ export async function seedDefaultData(): Promise<void> {
     if (!snap.empty) return;
 
     // Admin profile
-    await setDoc(doc(db, 'users', 'admin-001'), {
-      id: 'admin-001',
+    await setDoc(doc(db, 'users', 'admin-1'), {
+      id: 'admin-1',
       name: 'Admin User',
       email: 'admin@examapp.com',
       role: 'admin',
@@ -114,8 +114,8 @@ export async function seedDefaultData(): Promise<void> {
     } as User);
 
     // Demo student profile
-    await setDoc(doc(db, 'users', 'student-001'), {
-      id: 'student-001',
+    await setDoc(doc(db, 'users', 'student-1'), {
+      id: 'student-1',
       name: 'John Student',
       email: 'student@examapp.com',
       role: 'student',
@@ -124,9 +124,9 @@ export async function seedDefaultData(): Promise<void> {
 
     // Seed topics
     const defaultTopics: Topic[] = [
-      { id: 'topic-001', name: 'JavaScript Fundamentals', description: 'Core concepts of JavaScript including variables, functions, and closures.', icon: '⚡', difficulty: 'Easy', createdAt: new Date().toISOString() },
-      { id: 'topic-002', name: 'React & Next.js', description: 'Modern React patterns, hooks, and Next.js App Router.', icon: '⚛️', difficulty: 'Medium', createdAt: new Date().toISOString() },
-      { id: 'topic-003', name: 'Data Structures', description: 'Arrays, linked lists, trees, graphs, and algorithm complexity.', icon: '🧮', difficulty: 'Hard', createdAt: new Date().toISOString() },
+      { id: 'topic-1', name: 'JavaScript Fundamentals', description: 'Core concepts of JavaScript including variables, functions, and closures.', icon: '⚡', difficulty: 'Easy', createdAt: new Date().toISOString() },
+      { id: 'topic-2', name: 'React & Next.js', description: 'Modern React patterns, hooks, and Next.js App Router.', icon: '⚛️', difficulty: 'Medium', createdAt: new Date().toISOString() },
+      { id: 'topic-3', name: 'Data Structures', description: 'Arrays, linked lists, trees, graphs, and algorithm complexity.', icon: '🧮', difficulty: 'Hard', createdAt: new Date().toISOString() },
     ];
     for (const t of defaultTopics) {
       await setDoc(doc(db, 'topics', t.id), t);
@@ -134,12 +134,12 @@ export async function seedDefaultData(): Promise<void> {
 
     // Seed questions
     const defaultQuestions: Question[] = [
-      { id: 'q-001', topicId: 'topic-001', text: 'Which keyword declares a block-scoped variable in JavaScript?', options: ['var', 'let', 'const', 'Both let and const'], correctAnswer: 3, explanation: 'Both `let` and `const` are block-scoped. `var` is function-scoped.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-002', topicId: 'topic-001', text: 'What does `typeof null` return?', options: ['null', 'undefined', 'object', 'string'], correctAnswer: 2, explanation: '`typeof null` returns "object" — a known historical quirk in JavaScript.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-003', topicId: 'topic-001', text: 'Which method is used to remove the last element from an array?', options: ['shift()', 'pop()', 'splice()', 'slice()'], correctAnswer: 1, explanation: '`pop()` removes and returns the last element of an array.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-004', topicId: 'topic-002', text: 'Which React hook is used to perform side effects?', options: ['useState', 'useEffect', 'useContext', 'useRef'], correctAnswer: 1, explanation: '`useEffect` is used for side effects like data fetching and subscriptions.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-005', topicId: 'topic-002', text: 'In Next.js App Router, pages are Server Components by default.', options: ['True', 'False', 'Only in production', 'Only with TypeScript'], correctAnswer: 0, explanation: 'Pages are Server Components by default. Add `"use client"` to opt-in to Client Components.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-006', topicId: 'topic-003', text: 'What is the time complexity of binary search?', options: ['O(n)', 'O(n²)', 'O(log n)', 'O(1)'], correctAnswer: 2, explanation: 'Binary search halves the search space each iteration, giving O(log n) complexity.', points: 15, createdAt: new Date().toISOString() },
+      { id: 'q-1', topicId: 'topic-1', text: 'Which keyword declares a block-scoped variable in JavaScript?', options: ['var', 'let', 'const', 'Both let and const'], correctAnswer: 3, explanation: 'Both `let` and `const` are block-scoped. `var` is function-scoped.', points: 10, createdAt: new Date().toISOString() },
+      { id: 'q-2', topicId: 'topic-1', text: 'What does `typeof null` return?', options: ['null', 'undefined', 'object', 'string'], correctAnswer: 2, explanation: '`typeof null` returns "object" — a known historical quirk in JavaScript.', points: 10, createdAt: new Date().toISOString() },
+      { id: 'q-3', topicId: 'topic-1', text: 'Which method is used to remove the last element from an array?', options: ['shift()', 'pop()', 'splice()', 'slice()'], correctAnswer: 1, explanation: '`pop()` removes and returns the last element of an array.', points: 10, createdAt: new Date().toISOString() },
+      { id: 'q-4', topicId: 'topic-2', text: 'Which React hook is used to perform side effects?', options: ['useState', 'useEffect', 'useContext', 'useRef'], correctAnswer: 1, explanation: '`useEffect` is used for side effects like data fetching and subscriptions.', points: 10, createdAt: new Date().toISOString() },
+      { id: 'q-5', topicId: 'topic-2', text: 'In Next.js App Router, pages are Server Components by default.', options: ['True', 'False', 'Only in production', 'Only with TypeScript'], correctAnswer: 0, explanation: 'Pages are Server Components by default. Add `"use client"` to opt-in to Client Components.', points: 10, createdAt: new Date().toISOString() },
+      { id: 'q-6', topicId: 'topic-3', text: 'What is the time complexity of binary search?', options: ['O(n)', 'O(n²)', 'O(log n)', 'O(1)'], correctAnswer: 2, explanation: 'Binary search halves the search space each iteration, giving O(log n) complexity.', points: 15, createdAt: new Date().toISOString() },
     ];
     for (const q of defaultQuestions) {
       await setDoc(doc(db, 'questions', q.id), q);
@@ -257,6 +257,11 @@ export async function register(
   const snap = await getDocs(q);
   if (!snap.empty) return 'An account with this email already exists.';
 
+  // Get all users to calculate next sequential ID
+  const allUsersSnap = await getDocs(usersCol());
+  const allUsers = allUsersSnap.docs.map(d => d.data() as User);
+  const nextId = getNextSequentialId(role, allUsers.map(u => u.id));
+
   // Create account in Firebase Auth for ALL roles
   try {
     await createUserWithEmailAndPassword(auth, normalised, password);
@@ -270,7 +275,7 @@ export async function register(
 
   // Store profile in Firestore — password is managed by Firebase Auth, not stored here
   const newUser: User = {
-    id: generateId(role),
+    id: nextId,
     name: name.trim(),
     email: normalised,
     role,
@@ -389,6 +394,24 @@ export async function deleteResult(id: string): Promise<void> {
 // HELPERS
 // ============================
 
+/**
+ * Generates a sequential ID (serial number) based on existing IDs.
+ * Example: if existing are [topic-1, topic-2], returns topic-3.
+ */
+export function getNextSequentialId(prefix: string, existingIds: string[]): string {
+  const numbers = existingIds
+    .filter(id => id.startsWith(`${prefix}-`))
+    .map(id => {
+      const parts = id.split('-');
+      return parseInt(parts[parts.length - 1]);
+    })
+    .filter(n => !isNaN(n));
+
+  const nextNum = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
+  return `${prefix}-${nextNum}`;
+}
+
+/** @deprecated Use getNextSequentialId instead where possible */
 export function generateId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 }

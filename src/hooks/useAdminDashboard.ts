@@ -5,7 +5,7 @@ import {
   getTopics, saveTopic as storageSaveTopic, deleteTopic as storageDeleteTopic,
   getQuestions, saveQuestion as storageSaveQuestion, deleteQuestion as storageDeleteQuestion,
   getResults, getUsers, deleteUser as storageDeleteUser,
-  generateId,
+  getNextSequentialId,
   type Topic, type Question
 } from '@/lib/storage';
 
@@ -92,7 +92,7 @@ export function useAdminDashboard() {
 
     try {
       const topic: Topic = {
-        id: editingTopic?.id || generateId('topic'),
+        id: editingTopic?.id || getNextSequentialId('topic', topics.map(t => t.id)),
         name: topicForm.name.trim(),
         description: topicForm.description,
         icon: topicForm.icon,
@@ -132,7 +132,7 @@ export function useAdminDashboard() {
   async function handleQuestionSubmit(e: React.FormEvent) {
     e.preventDefault();
     const q: Question = {
-      id: editingQuestion?.id || generateId('q'),
+      id: editingQuestion?.id || getNextSequentialId('q', questions.map(q => q.id)),
       topicId: questionForm.topicId,
       text: questionForm.text,
       options: questionForm.options,
