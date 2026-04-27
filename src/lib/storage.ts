@@ -88,29 +88,36 @@ export async function seedDefaultData(): Promise<void> {
   const snap = await getDocs(usersCol());
   if (!snap.empty) return; // already seeded
 
-  // Seed admin — stays Firestore-only with password (never uses Firebase Auth)
+  // Seed admin — profile in Firestore, credentials in Firebase Auth
   const adminUser: User = {
     id: 'admin-001',
     name: 'Admin User',
     email: 'admin@examapp.com',
-    password: 'admin123',
+    // No password stored in Firestore — Firebase Auth handles it
     role: 'admin',
     createdAt: new Date().toISOString(),
   };
   await setDoc(doc(db, 'users', adminUser.id), adminUser);
 
-  // Seed demo student — create in Firebase Auth AND Firestore
+  // Register admin in Firebase Auth
+  try {
+    await createUserWithEmailAndPassword(auth, 'admin@examapp.com', 'admin123');
+  } catch {
+    // Already exists in Firebase Auth — safe to ignore
+  }
+
+  // Seed demo student — profile in Firestore, credentials in Firebase Auth
   const demoStudent: User = {
     id: 'student-001',
     name: 'John Student',
     email: 'student@examapp.com',
-    // No password stored in Firestore for students
+    // No password stored in Firestore
     role: 'student',
     createdAt: new Date().toISOString(),
   };
   await setDoc(doc(db, 'users', demoStudent.id), demoStudent);
 
-  // Register demo student in Firebase Auth so they can log in
+  // Register demo student in Firebase Auth
   try {
     await createUserWithEmailAndPassword(auth, 'student@examapp.com', 'student123');
   } catch {
@@ -201,24 +208,19 @@ export async function updateUserProfile(data: Partial<User>): Promise<AuthState 
 export async function loginAny(email: string, password: string): Promise<AuthState | null> {
   const normalised = email.toLowerCase().trim();
 
-  // Fetch Firestore profile first to determine role
+  // Authenticate via Firebase Auth (works for both admin and student)
+  try {
+    await signInWithEmailAndPassword(auth, normalised, password);
+  } catch {
+    return null; // Wrong password or user not found
+  }
+
+  // Fetch Firestore profile to get role, name, avatar
   const q = query(usersCol(), where('email', '==', normalised));
   const snap = await getDocs(q);
   if (snap.empty) return null;
 
   const user = snap.docs[0].data() as User;
-
-  if (user.role === 'admin') {
-    // Admin: compare plaintext password stored in Firestore (never in Firebase Auth)
-    if (user.password !== password) return null;
-  } else {
-    // Student: authenticate via Firebase Auth
-    try {
-      await signInWithEmailAndPassword(auth, normalised, password);
-    } catch {
-      return null; // Wrong password or account not found in Firebase Auth
-    }
-  }
 
   const authState: AuthState = {
     userId: user.id,
@@ -254,25 +256,22 @@ export async function register(
   const snap = await getDocs(q);
   if (!snap.empty) return 'An account with this email already exists.';
 
-  if (role === 'student') {
-    // Create account in Firebase Auth first
-    try {
-      await createUserWithEmailAndPassword(auth, normalised, password);
-    } catch (err: unknown) {
-      const code = (err as { code?: string }).code;
-      if (code === 'auth/email-already-in-use') {
-        return 'An account with this email already exists.';
-      }
-      return 'Failed to create account. Please try again.';
+  // Create account in Firebase Auth for ALL roles
+  try {
+    await createUserWithEmailAndPassword(auth, normalised, password);
+  } catch (err: unknown) {
+    const code = (err as { code?: string }).code;
+    if (code === 'auth/email-already-in-use') {
+      return 'An account with this email already exists.';
     }
+    return 'Failed to create account. Please try again.';
   }
 
-  // Store profile in Firestore — no password for students
+  // Store profile in Firestore — password is managed by Firebase Auth, not stored here
   const newUser: User = {
     id: generateId(role),
     name: name.trim(),
     email: normalised,
-    ...(role === 'admin' ? { password } : {}), // Only admin stores password
     role,
     createdAt: new Date().toISOString(),
   };

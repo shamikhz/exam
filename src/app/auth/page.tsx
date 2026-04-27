@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, getUsers, type AuthState } from '@/lib/storage';
+import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, type AuthState } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider, githubProvider } from '@/lib/firebase';
@@ -88,24 +88,9 @@ export default function AuthPage() {
     setLoading(true);
 
     if (mode === 'login') {
-      if (role === 'admin') {
-        // Admin login: checked against Firestore
-        const allUsers = await getUsers();
-        const userExists = allUsers.some(u => u.email === email.trim().toLowerCase());
-        if (!userExists) {
-          setError('No admin account found with this email.');
-          setLoading(false);
-          return;
-        }
-      }
-
       const result = await loginAny(email.trim().toLowerCase(), password);
       if (!result) {
-        setError(
-          role === 'admin'
-            ? 'Incorrect password. Please try again.'
-            : 'Incorrect email or password. Please try again.'
-        );
+        setError('Incorrect email or password. Please try again.');
         setLoading(false);
         return;
       }
