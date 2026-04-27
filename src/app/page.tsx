@@ -193,9 +193,9 @@ export default function LandingPage() {
         */}
 
         <div className={styles.footerLinks}>
-          <Link href="#">Privacy Policy</Link>
-          <Link href="#">Terms of Service</Link>
-          <Link href="#">Contact Us</Link>
+          <Link href="/privacy-policy">Privacy Policy</Link>
+          <Link href="/terms-of-service">Terms of Service</Link>
+          <Link href="/contact">Contact Us</Link>
         </div>
       </footer>
 
