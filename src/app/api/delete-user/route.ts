@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { adminAuth } from '@/lib/firebaseAdmin';
+import { getAdminAuth } from '@/lib/firebaseAdmin';
 
 export async function POST(request: Request) {
   try {
+    const adminAuth = getAdminAuth();
     const { email } = await request.json();
 
     if (!email) {

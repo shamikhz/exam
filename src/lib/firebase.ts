@@ -15,13 +15,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase (avoid duplicate app on hot reload)
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Guard against missing config during build time
+const isConfigured = !!firebaseConfig.apiKey;
+const app = (!getApps().length && isConfigured) 
+  ? initializeApp(firebaseConfig) 
+  : (getApps().length ? getApp() : null);
 
-const auth = getAuth(app);
+// Dummy auth/db if not configured (to prevent crashes during pre-render)
+const auth = app ? getAuth(app) : {} as any;
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
-const db = getFirestore(app);
-const storage = getStorage(app);
+const db = app ? getFirestore(app) : {} as any;
+const storage = app ? getStorage(app) : {} as any;
 
 // Analytics: only in the browser
 let analytics = null;
