@@ -1,6 +1,6 @@
-# OptimaPath — Project Overview
+# OptimaSkill — Project Overview
 
-**OptimaPath** is a premium, high-performance online examination platform designed to provide a seamless experience for both educators (Admins) and learners (Students). Formerly known as ExamTop, the platform has been rebranded and optimized for speed, security, and scalability.
+**OptimaSkill** is a premium, high-performance online examination platform designed to provide a seamless experience for both educators (Admins) and learners (Students). Formerly known as ExamTop, the platform has been rebranded and optimized for speed, security, and scalability.
 
 ---
 
@@ -38,7 +38,7 @@
 - **Advanced Dashboard**: High-level stats on platform usage and content density.
 
 ### Platform Extras
-- **Sequential IDs**: Unlike standard Firebase random IDs, OptimaPath uses a custom sequential numbering system (e.g., `topic-1`, `student-2`) for better readability.
+- **Sequential IDs**: Unlike standard Firebase random IDs, OptimaSkill uses a custom sequential numbering system (e.g., `topic-1`, `student-2`) for better readability.
 - **Production-Ready Security**: Strict Firestore Security Rules to protect user data.
 - **Legal Compliance**: Integrated Privacy Policy, Terms of Service, and Contact modules.
 
@@ -54,4 +54,4 @@
 
 ---
 
-**Tagline**: *OptimaPath — the best path*
+**Tagline**: *OptimaSkill — the best skill*

@@ -16,7 +16,7 @@ bun dev
 
 
 
-link-https://optimapath.netlify.app/
+link-https://optimaskill.netlify.app/
 
 ## Deploy on Vercel
 

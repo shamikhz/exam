@@ -41,8 +41,8 @@ export function DashboardHeader({
       <div className={styles.headerLeft}>
         <span className={styles.logo}>🎓</span>
         <div className={styles.logoTextWrapper}>
-          <span className={styles.logoText}>OptimaPath</span>
-          <span className={styles.logoTagline}>the best path</span>
+          <span className={styles.logoText}>OptimaSkill</span>
+          <span className={styles.logoTagline}>the best skill</span>
         </div>
         {view !== 'dashboard' && (
           <button onClick={onBack} className={styles.backBtn}>

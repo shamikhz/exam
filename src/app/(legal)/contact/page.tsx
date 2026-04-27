@@ -26,8 +26,8 @@ export default function ContactPage() {
         <Link href="/" className={styles.navBrand}>
           <span className={styles.navBrandIcon}>⚡</span>
           <div className={styles.navTextWrapper}>
-            <span className={styles.navBrandText}>OptimaPath</span>
-            <span className={styles.navTagline}>the best path</span>
+            <span className={styles.navBrandText}>OptimaSkill</span>
+            <span className={styles.navTagline}>the best skill</span>
           </div>
         </Link>
         <Link href="/" className={styles.backBtn}>← Back to Home</Link>
@@ -157,7 +157,7 @@ export default function ContactPage() {
           <Link href="/terms-of-service">Terms of Service</Link>
           <Link href="/contact">Contact Us</Link>
         </div>
-        <p className={styles.footerCopy}>© 2026 OptimaPath. All rights reserved.</p>
+        <p className={styles.footerCopy}>© 2026 OptimaSkill. All rights reserved.</p>
       </footer>
     </div>
   );

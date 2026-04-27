@@ -631,14 +631,14 @@
   gap: 1.5rem;
 }
 
-.OptimaPathgress {
+.OptimaSkillgress {
   background: var(--color-secondary);
   border: 1px solid var(--color-border);
   border-radius: 14px;
   padding: 1.25rem;
 }
 
-.OptimaPathgressInfo {
+.OptimaSkillgressInfo {
   display: flex;
   justify-content: space-between;
   font-size: 0.875rem;

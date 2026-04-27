@@ -207,7 +207,7 @@ export default function AuthPage() {
       <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div className={styles.spinner} style={{ margin: '0 auto 1rem' }} />
-          <p style={{ opacity: 0.7 }}>Loading OptimaPath...</p>
+          <p style={{ opacity: 0.7 }}>Loading OptimaSkill...</p>
         </div>
       </div>
     );
@@ -225,8 +225,8 @@ export default function AuthPage() {
         <Link href="/" className={styles.logo}>
           <span className={styles.logoIcon}>⚡</span>
           <div className={styles.logoTextWrapper}>
-            <span className={styles.logoText}>OptimaPath</span>
-            <span className={styles.logoTagline}>the best path</span>
+            <span className={styles.logoText}>OptimaSkill</span>
+            <span className={styles.logoTagline}>the best skill</span>
           </div>
         </Link>
         <button id="auth-theme-toggle" onClick={toggleTheme} className={styles.themeBtn} aria-label="Toggle theme">
@@ -256,7 +256,7 @@ export default function AuthPage() {
               <div className={styles.testimonialAvatar}>👩‍💻</div>
               <div className={styles.testimonialBody}>
                 <p className={styles.testimonialText}>
-                  "OptimaPath helped me pass my certification exam on the first try. The explanations are incredible!"
+                  "OptimaSkill helped me pass my certification exam on the first try. The explanations are incredible!"
                 </p>
                 <div className={styles.testimonialAuthor}>Sarah K. — Software Engineer</div>
               </div>

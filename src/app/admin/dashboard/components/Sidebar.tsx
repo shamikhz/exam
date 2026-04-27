@@ -24,8 +24,8 @@ export function Sidebar({
       <div className={styles.sidebarBrand}>
         <span>⚙️</span>
         <div className={styles.brandTextWrapper}>
-          <span className={styles.sidebarBrandText}>OptimaPath Admin</span>
-          <span className={styles.sidebarTagline}>the best path</span>
+          <span className={styles.sidebarBrandText}>OptimaSkill Admin</span>
+          <span className={styles.sidebarTagline}>the best skill</span>
         </div>
       </div>
 

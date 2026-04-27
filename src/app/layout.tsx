@@ -4,15 +4,15 @@ import { ThemeProvider } from '@/lib/ThemeProvider';
 
 export const metadata: Metadata = {
   title: {
-    default: 'OptimaPath — Online Exam Platform',
-    template: '%s | OptimaPath',
+    default: 'OptimaSkill — Online Exam Platform',
+    template: '%s | OptimaSkill',
   },
   description:
-    'OptimaPath is a modern online examination platform for students and administrators. Manage topics, questions, and track performance with ease.',
+    'OptimaSkill is a modern online examination platform for students and administrators. Manage topics, questions, and track performance with ease.',
   keywords: ['online exam', 'quiz platform', 'student assessment', 'e-learning', 'exam management'],
-  authors: [{ name: 'OptimaPath Team' }],
+  authors: [{ name: 'OptimaSkill Team' }],
   openGraph: {
-    title: 'OptimaPath — Online Exam Platform',
+    title: 'OptimaSkill — Online Exam Platform',
     description: 'A modern online examination platform for students and administrators.',
     type: 'website',
   },

@@ -38,8 +38,8 @@ export default function LandingPage() {
         <div className={styles.navBrand}>
           <span className={styles.navLogo}>⚡</span>
           <div className={styles.navTextWrapper}>
-            <span className={styles.navTitle}>OptimaPath</span>
-            <span className={styles.navTagline}>the best path</span>
+            <span className={styles.navTitle}>OptimaSkill</span>
+            <span className={styles.navTagline}>the best skill</span>
           </div>
         </div>
         <div className={styles.navActions}>
@@ -121,7 +121,7 @@ export default function LandingPage() {
       {/* ---- Features ---- */}
       <section className={styles.features} id="features">
         <div className={styles.sectionHeader}>
-          <span className={styles.sectionBadge}>Why OptimaPath?</span>
+          <span className={styles.sectionBadge}>Why OptimaSkill?</span>
           <h2 className={styles.sectionTitle}>Everything you need to run great exams</h2>
           <p className={styles.sectionSubtitle}>
             Purpose-built tools for admins and students — from question creation to final results.
@@ -180,9 +180,9 @@ export default function LandingPage() {
         <div className={styles.footerBrand}>
           <div className={styles.footerLogoContainer}>
             <span className={styles.footerLogo}>⚡</span>
-            <span className={styles.footerTitle}>OptimaPath</span>
+            <span className={styles.footerTitle}>OptimaSkill</span>
           </div>
-          <p className={styles.footerText}>© 2026 OptimaPath. All rights reserved.</p>
+          <p className={styles.footerText}>© 2026 OptimaSkill. All rights reserved.</p>
         </div>
 
         {/* 
