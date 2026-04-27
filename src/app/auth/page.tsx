@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, type AuthState } from '@/lib/storage';
+import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, getUsers, type AuthState } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider, githubProvider } from '@/lib/firebase';
