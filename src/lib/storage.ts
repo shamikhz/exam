@@ -121,15 +121,6 @@ export async function seedDefaultData(): Promise<void> {
       createdAt: new Date().toISOString(),
     } as User);
 
-    // Demo student profile
-    await setDoc(doc(db, 'users', 'student-1'), {
-      id: 'student-1',
-      name: 'John Student',
-      email: 'student@examapp.com',
-      role: 'student',
-      createdAt: new Date().toISOString(),
-    } as User);
-
     // Seed topics
     const defaultTopics: Topic[] = [
       { id: 'topic-1', name: 'JavaScript Fundamentals', description: 'Core concepts of JavaScript including variables, functions, and closures.', icon: '⚡', difficulty: 'Easy', createdAt: new Date().toISOString() },

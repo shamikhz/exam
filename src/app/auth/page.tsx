@@ -204,13 +204,6 @@ export default function AuthPage() {
     }
   }
 
-  const fillDemo = () => {
-    if (mode === 'login') {
-      setEmail(role === 'admin' ? 'admin@examapp.com' : 'student@examapp.com');
-      setPassword(role === 'admin' ? 'admin123' : 'student123');
-    }
-  };
-
   if (seeding) {
     return (
       <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -395,11 +388,6 @@ export default function AuthPage() {
               <div className={styles.inputBlock}>
                 <div className={styles.labelRow}>
                   <label htmlFor="auth-password">Password</label>
-                  {mode === 'login' && (
-                    <button type="button" className={styles.forgotLink} onClick={fillDemo}>
-                      Use demo account →
-                    </button>
-                  )}
                 </div>
                 <div className={styles.inputWrap}>
                   <input
