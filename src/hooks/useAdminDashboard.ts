@@ -4,9 +4,10 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   getTopics, saveTopic as storageSaveTopic, deleteTopic as storageDeleteTopic,
   getQuestions, saveQuestion as storageSaveQuestion, deleteQuestion as storageDeleteQuestion,
-  getResults, getUsers, deleteUser as storageDeleteUser,
+  getResults, getUsers, deleteUser as storageDeleteUser, saveQuestionsBatch,
   type Topic, type Question
 } from '@/lib/storage';
+import mammoth from 'mammoth';
 
 export type Tab = 'overview' | 'topics' | 'questions' | 'students';
 
@@ -31,6 +32,7 @@ export function useAdminDashboard() {
   const [topicError, setTopicError] = useState('');
   const [questionError, setQuestionError] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isUploading, setIsUploading] = useState<string | null>(null);
   const [showQuestionForm, setShowQuestionForm] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [questionForm, setQuestionForm] = useState({
@@ -169,6 +171,78 @@ export function useAdminDashboard() {
     await refreshData();
   }
 
+  // Bulk Upload Logic
+  async function handleBulkUpload(file: File, topicId: string) {
+    setIsUploading(topicId);
+    setTopicError('');
+    
+    try {
+      let text = '';
+      if (file.name.endsWith('.docx')) {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        text = result.value;
+      } else {
+        text = await file.text();
+      }
+
+      // Try to find JSON in the text (in case there's extra text in the Word doc)
+      const jsonStart = text.indexOf('[');
+      const jsonEnd = text.lastIndexOf(']') + 1;
+      
+      if (jsonStart === -1 || jsonEnd === 0) {
+        throw new Error("Could not find a valid JSON list of questions in the file.");
+      }
+
+      const rawJson = text.substring(jsonStart, jsonEnd);
+      const questionsData = JSON.parse(rawJson);
+
+      if (!Array.isArray(questionsData)) {
+        throw new Error("File must contain a list (array) of questions.");
+      }
+
+      const validQuestions: Question[] = [];
+      const timestamp = new Date().toISOString();
+
+      for (const q of questionsData) {
+        // Basic validation
+        if (!q.text || !q.options || !Array.isArray(q.options) || q.options.length < 2) continue;
+
+        // Duplicate check (against existing questions)
+        const isDuplicate = questions.some(ex => 
+          ex.topicId === topicId && 
+          ex.text.trim().toLowerCase() === q.text.trim().toLowerCase()
+        );
+
+        if (!isDuplicate) {
+          validQuestions.push({
+            id: `q-${Math.random().toString(36).substr(2, 9)}`,
+            topicId,
+            text: q.text.trim(),
+            options: q.options.map((opt: string) => opt.trim()),
+            correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : 0,
+            explanation: q.explanation || '',
+            points: q.points || 10,
+            createdAt: timestamp
+          });
+        }
+      }
+
+      if (validQuestions.length === 0) {
+        throw new Error("No new questions found. They might be duplicates or incorrectly formatted.");
+      }
+
+      await saveQuestionsBatch(validQuestions);
+      alert(`Successfully uploaded ${validQuestions.length} questions!`);
+      await refreshData();
+    } catch (err: any) {
+      console.error("Bulk upload error:", err);
+      setTopicError(`Upload failed: ${err.message}`);
+    } finally {
+      setIsUploading(null);
+    }
+  }
+
   async function handleDeleteStudent(id: string) {
     const userToDelete = users.find(u => u.id === id);
     if (userToDelete) {
@@ -230,6 +304,7 @@ export function useAdminDashboard() {
       avgScore,
       passRate
     },
-    filteredQuestions
+    filteredQuestions,
+    isUploading, handleBulkUpload
   };
 }

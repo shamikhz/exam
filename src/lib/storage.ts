@@ -406,6 +406,15 @@ export async function saveQuestion(question: Partial<Question> & { topicId: stri
   }
 }
 
+export async function saveQuestionsBatch(questions: Question[]): Promise<void> {
+  const batch = writeBatch(db);
+  questions.forEach((q) => {
+    const docRef = doc(db, 'questions', q.id);
+    batch.set(docRef, q);
+  });
+  await batch.commit();
+}
+
 export async function deleteQuestion(id: string): Promise<void> {
   await deleteDoc(doc(db, 'questions', id));
 }

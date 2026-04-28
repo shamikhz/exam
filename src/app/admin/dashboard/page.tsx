@@ -147,6 +147,8 @@ export default function AdminDashboard() {
                   onAddTopic={() => openTopicForm()}
                   onEditTopic={openTopicForm}
                   onDeleteTopic={(id) => setDeleteConfirm({ type: 'topic', id })}
+                  isUploading={isUploading}
+                  onBulkUpload={handleBulkUpload}
                   difficultyColors={difficultyColors} styles={styles}
                 />
               )}

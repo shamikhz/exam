@@ -11,6 +11,8 @@ interface TopicsTabProps {
   onEditTopic: (topic: Topic) => void;
   onDeleteTopic: (id: string) => void;
   difficultyColors: Record<string, string>;
+  isUploading: string | null;
+  onBulkUpload: (file: File, topicId: string) => void;
   styles: any;
 }
 
@@ -22,6 +24,8 @@ export function TopicsTab({
   onEditTopic,
   onDeleteTopic,
   difficultyColors,
+  isUploading,
+  onBulkUpload,
   styles
 }: TopicsTabProps) {
   const filteredTopics = topics.filter(t => selectedTopicView === 'all' || t.id === selectedTopicView);
@@ -68,7 +72,26 @@ export function TopicsTab({
             <div className={styles.topicCardMeta}>
               <span>❓ {t.questionCount} questions</span>
               <div className={styles.topicCardActions}>
-                <button id={`edit-topic-${t.id}`} onClick={() => onAddTopic()} className={styles.editBtn}>✏️ Edit</button>
+                <div className={styles.uploadWrapper}>
+                  <input 
+                    type="file" 
+                    id={`upload-${t.id}`} 
+                    accept=".docx,.json,.txt" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) onBulkUpload(file, t.id);
+                    }}
+                    style={{ display: 'none' }}
+                  />
+                  <label 
+                    htmlFor={`upload-${t.id}`} 
+                    className={`${styles.uploadBtn} ${isUploading === t.id ? styles.uploadBtnDisabled : ''}`}
+                    title="Bulk Upload Questions (.docx, .json)"
+                  >
+                    {isUploading === t.id ? '⏳' : '📤'}
+                  </label>
+                </div>
+                <button id={`edit-topic-${t.id}`} onClick={() => onEditTopic(t)} className={styles.editBtn}>✏️</button>
                 <button id={`delete-topic-${t.id}`} onClick={() => onDeleteTopic(t.id)} className={styles.deleteBtn}>🗑️</button>
               </div>
             </div>
