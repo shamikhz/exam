@@ -120,76 +120,70 @@ export default function AuthPage() {
   }
 
   async function handleSocial(id: string) {
+    if (!auth || !auth.app) {
+      setError("Firebase Authentication is not initialized. Please check your environment variables.");
+      return;
+    }
+
     setSocialLoading(id);
+    setError("");
+
     try {
-      if (id === 'google') {
-        const result = await signInWithPopup(auth, googleProvider);
-        const user = result.user;
-        const userEmail = user.email || `${user.uid}@examapp.com`;
-        const userName = user.displayName || 'Google User';
+      const provider = id === 'google' ? googleProvider : githubProvider;
+      
+      let result;
+      try {
+        // Attempt popup first
+        result = await signInWithPopup(auth, provider);
+      } catch (err: any) {
+        // If popup is blocked or fails, we can try redirect in a real app, 
+        // but for now let's just catch and report common issues.
+        if (err.code === 'auth/popup-blocked') {
+          throw new Error("The sign-in popup was blocked by your browser. Please allow popups for this site.");
+        } else if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
+          throw new Error("Sign-in was cancelled.");
+        } else if (err.code === 'auth/operation-not-allowed') {
+          throw new Error(`${id.charAt(0).toUpperCase() + id.slice(1)} sign-in is not enabled in Firebase Console.`);
+        } else if (err.code === 'auth/unauthorized-domain') {
+          throw new Error("This domain is not authorized for Firebase Authentication. Please add it in Firebase Console.");
+        }
+        throw err;
+      }
 
-        const allUsers = await getUsers();
-        const userExists = allUsers.some(u => u.email.toLowerCase() === userEmail.toLowerCase());
+      const user = result.user;
+      const userEmail = user.email || (id === 'github' ? `github-${user.uid}@examapp.com` : `${user.uid}@examapp.com`);
+      const userName = user.displayName || user.email?.split('@')[0] || `${id.charAt(0).toUpperCase() + id.slice(1)} User`;
 
-        if (mode === 'login') {
-          if (userExists) {
-            const existing = await loginWithoutPassword(userEmail);
-            if (existing) redirectByRole(existing);
-          } else {
-            setMode('register');
-            setName(userName);
-            setEmail(userEmail);
-            setError('Account not found. Please complete the form to create your account.');
-          }
+      const allUsers = await getUsers();
+      const userExists = allUsers.some(u => u.email.toLowerCase() === userEmail.toLowerCase());
+
+      if (mode === 'login') {
+        if (userExists) {
+          const existing = await loginWithoutPassword(userEmail);
+          if (existing) redirectByRole(existing);
         } else {
-          if (userExists) {
-            const existing = await loginWithoutPassword(userEmail);
-            if (existing) redirectByRole(existing);
-          } else {
-            const demoPassword = `google-auth-${user.uid}`;
-            const regResult = await register(userName, userEmail, demoPassword, role);
-            if (typeof regResult !== 'string') {
-              redirectByRole(regResult);
-            } else {
-              setError(regResult);
-            }
-          }
+          setMode('register');
+          setName(userName);
+          setEmail(userEmail);
+          setError(`Account not found for ${userEmail}. Please complete the form to create your account.`);
         }
       } else {
-        // Real GitHub Sign-In
-        const result = await signInWithPopup(auth, githubProvider);
-        const user = result.user;
-        const userEmail = user.email || `github-${user.uid}@examapp.com`;
-        const userName = user.displayName || user.email?.split('@')[0] || 'GitHub User';
-
-        const allUsers = await getUsers();
-        const userExists = allUsers.some(u => u.email.toLowerCase() === userEmail.toLowerCase());
-
-        if (mode === 'login') {
-          if (userExists) {
-            const existing = await loginWithoutPassword(userEmail);
-            if (existing) redirectByRole(existing);
-          } else {
-            setMode('register');
-            setName(userName);
-            setEmail(userEmail);
-            setError('Account not found. Please complete the form to create your account.');
-          }
+        if (userExists) {
+          const existing = await loginWithoutPassword(userEmail);
+          if (existing) redirectByRole(existing);
         } else {
-          if (userExists) {
-            const existing = await loginWithoutPassword(userEmail);
-            if (existing) redirectByRole(existing);
+          const demoPassword = `${id}-auth-${user.uid}`;
+          const regResult = await register(userName, userEmail, demoPassword, role);
+          if (typeof regResult !== 'string') {
+            redirectByRole(regResult);
           } else {
-            const demoPassword = `github-auth-${user.uid}`;
-            const result = await register(userName, userEmail, demoPassword, role);
-            if (typeof result !== 'string') redirectByRole(result);
-            else setError(result);
+            setError(regResult);
           }
         }
       }
     } catch (err: any) {
-      console.error("Social login error:", err);
-      setError(err.message || "Failed to sign in with provider.");
+      console.error(`${id} login error:`, err);
+      setError(err.message || `Failed to sign in with ${id}.`);
     } finally {
       setSocialLoading(null);
     }
