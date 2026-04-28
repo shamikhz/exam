@@ -37,7 +37,7 @@ export default function AdminDashboard() {
     showTopicForm, setShowTopicForm, editingTopic, topicForm, setTopicForm, topicError,
     openTopicForm, handleTopicSubmit, handleDeleteTopic,
 
-    showQuestionForm, setShowQuestionForm, editingQuestion, questionForm, setQuestionForm,
+    showQuestionForm, setShowQuestionForm, editingQuestion, questionForm, setQuestionForm, questionError,
     openQuestionForm, handleQuestionSubmit, handleDeleteQuestion,
 
     handleDeleteStudent,
@@ -186,7 +186,8 @@ export default function AdminDashboard() {
         handleTopicSubmit={handleTopicSubmit}
         showQuestionForm={showQuestionForm} setShowQuestionForm={setShowQuestionForm}
         editingQuestion={editingQuestion} questionForm={questionForm}
-        setQuestionForm={setQuestionForm} handleQuestionSubmit={handleQuestionSubmit}
+        setQuestionForm={setQuestionForm} questionError={questionError}
+        handleQuestionSubmit={handleQuestionSubmit}
         topics={topics}
         deleteConfirm={deleteConfirm} setDeleteConfirm={setDeleteConfirm}
         users={users} handleDeleteTopic={handleDeleteTopic}

@@ -29,7 +29,8 @@ export function useAdminDashboard() {
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [topicForm, setTopicForm] = useState({ name: '', description: '', icon: '📚', difficulty: 'Easy' as Topic['difficulty'] });
   const [topicError, setTopicError] = useState('');
-
+  const [questionError, setQuestionError] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [showQuestionForm, setShowQuestionForm] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [questionForm, setQuestionForm] = useState({
@@ -130,6 +131,20 @@ export function useAdminDashboard() {
 
   async function handleQuestionSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setQuestionError('');
+
+    // Duplicate check: check if question text already exists in this topic
+    const isDuplicate = questions.some(q => 
+      q.topicId === questionForm.topicId && 
+      q.text.trim().toLowerCase() === questionForm.text.trim().toLowerCase() &&
+      q.id !== editingQuestion?.id
+    );
+
+    if (isDuplicate) {
+      setQuestionError("This question already exists in this topic.");
+      return;
+    }
+
     const qData: Partial<Question> = {
       ...questionForm,
     };
@@ -191,7 +206,7 @@ export function useAdminDashboard() {
     openTopicForm, handleTopicSubmit, handleDeleteTopic,
 
     // Question logic
-    showQuestionForm, setShowQuestionForm, editingQuestion, questionForm, setQuestionForm,
+    showQuestionForm, setShowQuestionForm, editingQuestion, questionForm, setQuestionForm, questionError,
     openQuestionForm, handleQuestionSubmit, handleDeleteQuestion,
 
     // Student logic

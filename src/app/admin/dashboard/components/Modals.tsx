@@ -19,6 +19,7 @@ interface ModalsProps {
   editingQuestion: Question | null;
   questionForm: { topicId: string; text: string; options: string[]; correctAnswer: number; explanation: string; points: number };
   setQuestionForm: (form: any) => void;
+  questionError: string;
   handleQuestionSubmit: (e: React.FormEvent) => void;
   topics: Topic[];
   
@@ -35,7 +36,7 @@ interface ModalsProps {
 
 export function Modals({
   showTopicForm, setShowTopicForm, editingTopic, topicForm, setTopicForm, topicError, handleTopicSubmit,
-  showQuestionForm, setShowQuestionForm, editingQuestion, questionForm, setQuestionForm, handleQuestionSubmit, topics,
+  showQuestionForm, setShowQuestionForm, editingQuestion, questionForm, setQuestionForm, questionError, handleQuestionSubmit, topics,
   deleteConfirm, setDeleteConfirm, users, handleDeleteTopic, handleDeleteQuestion, handleDeleteStudent,
   styles
 }: ModalsProps) {
@@ -134,6 +135,13 @@ export function Modals({
               <h3>{editingQuestion ? 'Edit Question' : 'New Question'}</h3>
               <button onClick={() => setShowQuestionForm(false)} className={styles.modalClose}>✕</button>
             </div>
+
+            {questionError && (
+              <div className={styles.toastError} style={{ margin: '1rem 1.5rem 0', borderRadius: '10px' }}>
+                ⚠️ {questionError}
+              </div>
+            )}
+
             <form onSubmit={handleQuestionSubmit} id="question-form" className={styles.modalForm}>
               <div className={styles.inputBlock}>
                 <label htmlFor="q-topic">Topic</label>
