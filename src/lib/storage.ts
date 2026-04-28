@@ -250,6 +250,43 @@ export async function loginWithoutPassword(email: string): Promise<AuthState | n
   return authState;
 }
 
+export async function finalizeSocialLogin(firebaseUser: any, role: 'admin' | 'student'): Promise<AuthState> {
+  const email = firebaseUser.email || `${firebaseUser.uid}@social.examapp.com`;
+  const normalised = email.toLowerCase().trim();
+  
+  const q = query(usersCol(), where('email', '==', normalised));
+  const snap = await getDocs(q);
+  
+  let finalUser: User;
+  
+  if (snap.empty) {
+    // Create new user in Firestore
+    finalUser = {
+      id: firebaseUser.uid,
+      name: firebaseUser.displayName || normalised.split('@')[0],
+      email: normalised,
+      role,
+      avatar: firebaseUser.photoURL || undefined,
+      createdAt: new Date().toISOString(),
+    };
+    await setDoc(doc(db, 'users', finalUser.id), finalUser);
+  } else {
+    finalUser = snap.docs[0].data() as User;
+    // Update role if it's a new login to a different role? 
+    // Usually, we should stick to the stored role to avoid hijacking.
+  }
+
+  const authState: AuthState = {
+    userId: finalUser.id,
+    role: finalUser.role,
+    name: finalUser.name,
+    email: finalUser.email,
+    avatar: finalUser.avatar,
+  };
+  localStorage.setItem(AUTH_KEY, JSON.stringify(authState));
+  return authState;
+}
+
 export async function register(
   name: string,
   email: string,

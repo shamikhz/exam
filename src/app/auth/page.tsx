@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, checkUserExists, type AuthState } from '@/lib/storage';
+import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, checkUserExists, finalizeSocialLogin, type AuthState } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
-import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider, githubProvider } from '@/lib/firebase';
+import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import styles from './auth.module.css';
 
 type Mode = 'login' | 'register';
@@ -33,17 +33,22 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
-  const [seeding, setSeeding] = useState(true);
+  // Optimized startup: Check for user before showing seeding state
+  const [seeding, setSeeding] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !getCurrentUser();
+    }
+    return true;
+  });
 
   useEffect(() => {
-    // 1. Instant check for logged in user (synchronous localStorage)
     const user = getCurrentUser();
     if (user) {
       router.replace(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
       return;
     }
 
-    // 2. Heavy init (seeding) happens in the background
+    // Heavy init (seeding) happens in the background only if needed
     const init = async () => {
       try {
         await seedDefaultData();
@@ -125,80 +130,68 @@ export default function AuthPage() {
 
   async function handleSocial(id: string) {
     if (!auth || !auth.app) {
-      setError("Firebase Authentication is not initialized. Please check your environment variables.");
+      setError("Authentication is not initialized. Please check your connection.");
       return;
     }
 
     setSocialLoading(id);
     setError("");
 
-    // Detect popup closure via window focus as a fallback for faster UI response
+    // Instant UI recovery: if the user returns to the main window, 
+    // we assume the popup was closed or the process was interrupted.
     const handleFocus = () => {
       window.removeEventListener('focus', handleFocus);
       // Small delay to let Firebase catch up if it's actually succeeding
-      setTimeout(() => setSocialLoading(prev => prev === id ? null : prev), 500);
+      setTimeout(() => {
+        setSocialLoading(prev => prev === id ? null : prev);
+      }, 500);
     };
-    window.addEventListener('focus', handleFocus);
 
     try {
-      const provider = id === 'google' ? googleProvider : githubProvider;
+      // Create a fresh provider instance for each attempt
+      const provider = id === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider();
       
-      let result;
-      try {
-        // Attempt popup first
-        result = await signInWithPopup(auth, provider);
-        // If we got here, we succeeded. Remove the focus listener so it doesn't clear loading state prematurely
-        window.removeEventListener('focus', handleFocus);
-      } catch (err: any) {
-        window.removeEventListener('focus', handleFocus);
-        // If the user simply closed the popup, don't show an error — just stop loading.
-        if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
-          return;
-        }
-
-        if (err.code === 'auth/popup-blocked') {
-          throw new Error("The sign-in popup was blocked by your browser. Please allow popups for this site.");
-        } else if (err.code === 'auth/operation-not-allowed') {
-          throw new Error(`${id.charAt(0).toUpperCase() + id.slice(1)} sign-in is not enabled in Firebase Console.`);
-        } else if (err.code === 'auth/unauthorized-domain') {
-          throw new Error("This domain is not authorized for Firebase Authentication. Please add it in Firebase Console.");
-        }
-        throw err;
+      // Adding scopes explicitly can help with GitHub login issues
+      if (id === 'github') {
+        provider.addScope('read:user');
+        provider.addScope('user:email');
       }
 
-      const user = result.user;
-      const userEmail = user.email || (id === 'github' ? `github-${user.uid}@examapp.com` : `${user.uid}@examapp.com`);
-      const userName = user.displayName || user.email?.split('@')[0] || `${id.charAt(0).toUpperCase() + id.slice(1)} User`;
+      console.log(`[Auth] Initiating ${id} popup...`);
+      
+      // Start listening for focus back after a short delay (to let the popup open first)
+      setTimeout(() => {
+        window.addEventListener('focus', handleFocus);
+      }, 1000);
 
-      const userExists = await checkUserExists(userEmail);
+      const result = await signInWithPopup(auth, provider);
+      
+      // If we got here, success! Clear focus listener.
+      window.removeEventListener('focus', handleFocus);
+      
+      console.log(`[Auth] Social login success for: ${result.user.email}`);
 
-      if (mode === 'login') {
-        if (userExists) {
-          const existing = await loginWithoutPassword(userEmail);
-          if (existing) redirectByRole(existing);
-        } else {
-          setMode('register');
-          setName(userName);
-          setEmail(userEmail);
-          setError(`Account not found for ${userEmail}. Please complete the form to create your account.`);
-        }
-      } else {
-        if (userExists) {
-          const existing = await loginWithoutPassword(userEmail);
-          if (existing) redirectByRole(existing);
-        } else {
-          const demoPassword = `${id}-auth-${user.uid}`;
-          const regResult = await register(userName, userEmail, demoPassword, role);
-          if (typeof regResult !== 'string') {
-            redirectByRole(regResult);
-          } else {
-            setError(regResult);
-          }
-        }
-      }
+      const authState = await finalizeSocialLogin(result.user, role);
+      redirectByRole(authState);
     } catch (err: any) {
-      console.error(`${id} login error:`, err);
-      setError(err.message || `Failed to sign in with ${id}.`);
+      window.removeEventListener('focus', handleFocus);
+      console.error(`[Auth] ${id} login error:`, err);
+      
+      // Ignore user-cancelled errors as they are expected behavior
+      if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
+        return;
+      }
+      
+      let msg = err.message || `Failed to sign in with ${id}.`;
+      if (err.code === 'auth/popup-blocked') {
+        msg = "The sign-in popup was blocked by your browser. Please allow popups for this site.";
+      } else if (err.code === 'auth/operation-not-allowed') {
+        msg = `${id.charAt(0).toUpperCase() + id.slice(1)} sign-in is not enabled in Firebase Console.`;
+      } else if (err.code === 'auth/unauthorized-domain') {
+        msg = "This domain is not authorized for Firebase Authentication. Please check your Firebase Console.";
+      }
+      
+      setError(msg);
     } finally {
       setSocialLoading(null);
     }
@@ -338,6 +331,7 @@ export default function AuthPage() {
                   <button
                     key={s.id}
                     id={`social-${s.id}`}
+                    type="button"
                     onClick={() => handleSocial(s.id)}
                     className={styles.socialBtn}
                     disabled={socialLoading !== null}
