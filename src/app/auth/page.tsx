@@ -36,17 +36,21 @@ export default function AuthPage() {
   const [seeding, setSeeding] = useState(true);
 
   useEffect(() => {
+    // 1. Instant check for logged in user (synchronous localStorage)
+    const user = getCurrentUser();
+    if (user) {
+      router.replace(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
+      return;
+    }
+
+    // 2. Heavy init (seeding) happens in the background
     const init = async () => {
       try {
         await seedDefaultData();
       } catch (err) {
-        console.error("Failed to seed data (could be due to strict Firestore rules):", err);
+        console.error("Failed to seed data:", err);
       } finally {
         setSeeding(false);
-      }
-      const user = getCurrentUser();
-      if (user) {
-        router.replace(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
       }
     };
     init();
@@ -128,6 +132,14 @@ export default function AuthPage() {
     setSocialLoading(id);
     setError("");
 
+    // Detect popup closure via window focus as a fallback for faster UI response
+    const handleFocus = () => {
+      window.removeEventListener('focus', handleFocus);
+      // Small delay to let Firebase catch up if it's actually succeeding
+      setTimeout(() => setSocialLoading(prev => prev === id ? null : prev), 500);
+    };
+    window.addEventListener('focus', handleFocus);
+
     try {
       const provider = id === 'google' ? googleProvider : githubProvider;
       
@@ -135,7 +147,10 @@ export default function AuthPage() {
       try {
         // Attempt popup first
         result = await signInWithPopup(auth, provider);
+        // If we got here, we succeeded. Remove the focus listener so it doesn't clear loading state prematurely
+        window.removeEventListener('focus', handleFocus);
       } catch (err: any) {
+        window.removeEventListener('focus', handleFocus);
         // If the user simply closed the popup, don't show an error — just stop loading.
         if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
           return;

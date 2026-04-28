@@ -81,12 +81,16 @@ const topicsCol = () => collection(db, 'topics');
 const questionsCol = () => collection(db, 'questions');
 const resultsCol = () => collection(db, 'results');
 
+const SEEDED_KEY = 'exam_db_seeded';
+
 // ---- Seed default data on first boot ----
 export async function seedDefaultData(): Promise<void> {
   if (typeof window === 'undefined') return;
 
-  // Always ensure demo Firebase Auth accounts exist — even if Firestore is already seeded.
-  // These calls are safe to run every time: they silently skip if the account already exists.
+  // Optimized: check local flag first to skip all network requests
+  if (localStorage.getItem(SEEDED_KEY)) return;
+
+  // Always ensure demo Firebase Auth accounts exist
   const demoAccounts = [
     { email: 'admin@examapp.com',   password: 'admin123'   },
     { email: 'student@examapp.com', password: 'student123' },
@@ -95,15 +99,18 @@ export async function seedDefaultData(): Promise<void> {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
     } catch {
-      // auth/email-already-in-use → already in Firebase Auth, nothing to do
+      // auth/email-already-in-use → already in Firebase Auth
     }
   }
 
-  // Seed Firestore only once (wrapped in try/catch in case strict Firestore rules block unauthenticated reads)
+  // Seed Firestore only once
   try {
     const q = query(usersCol(), limit(1));
     const snap = await getDocs(q);
-    if (!snap.empty) return;
+    if (!snap.empty) {
+      localStorage.setItem(SEEDED_KEY, 'true');
+      return;
+    }
 
     // Admin profile
     await setDoc(doc(db, 'users', 'admin-1'), {
@@ -145,6 +152,7 @@ export async function seedDefaultData(): Promise<void> {
     for (const q of defaultQuestions) {
       await setDoc(doc(db, 'questions', q.id), q);
     }
+    localStorage.setItem(SEEDED_KEY, 'true');
   } catch (err) {
     console.warn("Skipping Firestore seeding (likely blocked by security rules):", err);
   }
