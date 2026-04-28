@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, getUsers, type AuthState } from '@/lib/storage';
+import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, checkUserExists, type AuthState } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider, githubProvider } from '@/lib/firebase';
@@ -136,12 +136,13 @@ export default function AuthPage() {
         // Attempt popup first
         result = await signInWithPopup(auth, provider);
       } catch (err: any) {
-        // If popup is blocked or fails, we can try redirect in a real app, 
-        // but for now let's just catch and report common issues.
+        // If the user simply closed the popup, don't show an error — just stop loading.
+        if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
+          return;
+        }
+
         if (err.code === 'auth/popup-blocked') {
           throw new Error("The sign-in popup was blocked by your browser. Please allow popups for this site.");
-        } else if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
-          throw new Error("Sign-in was cancelled.");
         } else if (err.code === 'auth/operation-not-allowed') {
           throw new Error(`${id.charAt(0).toUpperCase() + id.slice(1)} sign-in is not enabled in Firebase Console.`);
         } else if (err.code === 'auth/unauthorized-domain') {
@@ -154,8 +155,7 @@ export default function AuthPage() {
       const userEmail = user.email || (id === 'github' ? `github-${user.uid}@examapp.com` : `${user.uid}@examapp.com`);
       const userName = user.displayName || user.email?.split('@')[0] || `${id.charAt(0).toUpperCase() + id.slice(1)} User`;
 
-      const allUsers = await getUsers();
-      const userExists = allUsers.some(u => u.email.toLowerCase() === userEmail.toLowerCase());
+      const userExists = await checkUserExists(userEmail);
 
       if (mode === 'login') {
         if (userExists) {

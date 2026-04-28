@@ -10,7 +10,7 @@
 import {
   collection, doc,
   getDocs, getDoc, setDoc, deleteDoc, updateDoc,
-  query, where, writeBatch,
+  query, where, limit, writeBatch,
 } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
@@ -101,7 +101,8 @@ export async function seedDefaultData(): Promise<void> {
 
   // Seed Firestore only once (wrapped in try/catch in case strict Firestore rules block unauthenticated reads)
   try {
-    const snap = await getDocs(usersCol());
+    const q = query(usersCol(), limit(1));
+    const snap = await getDocs(q);
     if (!snap.empty) return;
 
     // Admin profile
@@ -156,6 +157,12 @@ export async function seedDefaultData(): Promise<void> {
 export async function getUsers(): Promise<User[]> {
   const snap = await getDocs(usersCol());
   return snap.docs.map(d => d.data() as User);
+}
+
+export async function checkUserExists(email: string): Promise<boolean> {
+  const q = query(usersCol(), where('email', '==', email.toLowerCase().trim()), limit(1));
+  const snap = await getDocs(q);
+  return !snap.empty;
 }
 
 export async function saveUser(user: User): Promise<void> {
