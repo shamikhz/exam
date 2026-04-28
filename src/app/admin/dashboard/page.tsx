@@ -43,7 +43,8 @@ export default function AdminDashboard() {
     handleDeleteStudent,
     deleteConfirm, setDeleteConfirm,
     stats,
-    filteredQuestions
+    filteredQuestions,
+    isUploading, handleBulkUpload
   } = useAdminDashboard();
 
   const tabs: { id: Tab; label: string; icon: string }[] = [
@@ -148,6 +149,7 @@ export default function AdminDashboard() {
                   onEditTopic={openTopicForm}
                   onDeleteTopic={(id) => setDeleteConfirm({ type: 'topic', id })}
                   isUploading={isUploading}
+                  uploadSuccess={uploadSuccess}
                   onBulkUpload={handleBulkUpload}
                   difficultyColors={difficultyColors} styles={styles}
                 />

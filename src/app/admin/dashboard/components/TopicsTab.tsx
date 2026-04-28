@@ -12,6 +12,7 @@ interface TopicsTabProps {
   onDeleteTopic: (id: string) => void;
   difficultyColors: Record<string, string>;
   isUploading: string | null;
+  uploadSuccess: string | null;
   onBulkUpload: (file: File, topicId: string) => void;
   styles: any;
 }
@@ -25,6 +26,7 @@ export function TopicsTab({
   onDeleteTopic,
   difficultyColors,
   isUploading,
+  uploadSuccess,
   onBulkUpload,
   styles
 }: TopicsTabProps) {
@@ -85,10 +87,14 @@ export function TopicsTab({
                   />
                   <label 
                     htmlFor={`upload-${t.id}`} 
-                    className={`${styles.uploadBtn} ${isUploading === t.id ? styles.uploadBtnDisabled : ''}`}
+                    className={`
+                      ${styles.uploadBtn} 
+                      ${isUploading === t.id ? styles.uploadBtnDisabled : ''} 
+                      ${uploadSuccess === t.id ? styles.uploadBtnSuccess : ''}
+                    `}
                     title="Bulk Upload Questions (.docx, .json)"
                   >
-                    {isUploading === t.id ? '⏳' : '📤'}
+                    {isUploading === t.id ? '⏳' : uploadSuccess === t.id ? '✅' : '📤'}
                   </label>
                 </div>
                 <button id={`edit-topic-${t.id}`} onClick={() => onEditTopic(t)} className={styles.editBtn}>✏️</button>

@@ -33,6 +33,7 @@ export function useAdminDashboard() {
   const [questionError, setQuestionError] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isUploading, setIsUploading] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const [showQuestionForm, setShowQuestionForm] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [questionForm, setQuestionForm] = useState({
@@ -205,22 +206,33 @@ export function useAdminDashboard() {
       const timestamp = new Date().toISOString();
 
       for (const q of questionsData) {
+        // Handle aliases: "question" -> "text", "answer" -> "correctAnswer"
+        const questionText = q.text || q.question;
+        const options = q.options;
+        let correctAnswer = typeof q.correctAnswer === 'number' ? q.correctAnswer : 0;
+
+        // If "answer" is provided as a string, find its index in options
+        if (q.answer && typeof q.answer === 'string' && Array.isArray(options)) {
+          const foundIdx = options.findIndex((opt: string) => opt.trim() === q.answer.trim());
+          if (foundIdx !== -1) correctAnswer = foundIdx;
+        }
+
         // Basic validation
-        if (!q.text || !q.options || !Array.isArray(q.options) || q.options.length < 2) continue;
+        if (!questionText || !options || !Array.isArray(options) || options.length < 2) continue;
 
         // Duplicate check (against existing questions)
         const isDuplicate = questions.some(ex => 
           ex.topicId === topicId && 
-          ex.text.trim().toLowerCase() === q.text.trim().toLowerCase()
+          ex.text.trim().toLowerCase() === questionText.trim().toLowerCase()
         );
 
         if (!isDuplicate) {
           validQuestions.push({
             id: `q-${Math.random().toString(36).substr(2, 9)}`,
             topicId,
-            text: q.text.trim(),
-            options: q.options.map((opt: string) => opt.trim()),
-            correctAnswer: typeof q.correctAnswer === 'number' ? q.correctAnswer : 0,
+            text: questionText.trim(),
+            options: options.map((opt: string) => opt.trim()),
+            correctAnswer,
             explanation: q.explanation || '',
             points: q.points || 10,
             createdAt: timestamp
@@ -233,7 +245,11 @@ export function useAdminDashboard() {
       }
 
       await saveQuestionsBatch(validQuestions);
-      alert(`Successfully uploaded ${validQuestions.length} questions!`);
+      
+      // Show success state briefly
+      setUploadSuccess(topicId);
+      setTimeout(() => setUploadSuccess(null), 3000);
+
       await refreshData();
     } catch (err: any) {
       console.error("Bulk upload error:", err);
@@ -305,6 +321,6 @@ export function useAdminDashboard() {
       passRate
     },
     filteredQuestions,
-    isUploading, handleBulkUpload
+    isUploading, uploadSuccess, handleBulkUpload
   };
 }
