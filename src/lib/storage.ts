@@ -377,6 +377,20 @@ export async function getQuestionsByTopic(topicId: string): Promise<Question[]> 
 }
 
 export async function saveQuestion(question: Partial<Question> & { topicId: string }): Promise<Question> {
+  // 1. Server-side duplicate check (as second line of defense)
+  if (!question.id && question.text) {
+    const q = query(
+      questionsCol(), 
+      where('topicId', '==', question.topicId),
+      where('text', '==', question.text.trim())
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      throw new Error("This question already exists in this topic.");
+    }
+  }
+
+  // 2. Save logic
   if (!question.id) {
     const newDoc = doc(questionsCol());
     const fullQuestion: Question = {

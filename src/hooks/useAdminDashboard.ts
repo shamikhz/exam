@@ -126,8 +126,14 @@ export function useAdminDashboard() {
         text: '', options: ['', '', '', ''], correctAnswer: 0, explanation: '', points: 10
       });
     }
+    setQuestionError('');
     setShowQuestionForm(true);
   }
+
+  // Clear question error when user starts typing or changes topic
+  useEffect(() => {
+    if (questionError) setQuestionError('');
+  }, [questionForm.text, questionForm.topicId]);
 
   async function handleQuestionSubmit(e: React.FormEvent) {
     e.preventDefault();
