@@ -442,15 +442,7 @@ export default function AuthPage() {
               </button>
             </form>
 
-            {/* Demo hint */}
-            {mode === 'login' && (
-              <div className={styles.demoHint}>
-                <span className={styles.demoHintIcon}>💡</span>
-                <span>
-                  Demo: <strong>{role === 'admin' ? 'admin@examapp.com / admin123' : 'student@examapp.com / student123'}</strong>
-                </span>
-              </div>
-            )}
+
 
             {/* Switch mode — hidden for admin */}
             {role === 'student' && (
