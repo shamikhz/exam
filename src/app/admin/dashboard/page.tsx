@@ -44,7 +44,7 @@ export default function AdminDashboard() {
     deleteConfirm, setDeleteConfirm,
     stats,
     filteredQuestions,
-    isUploading, handleBulkUpload
+    isUploading, uploadSuccess, handleBulkUpload
   } = useAdminDashboard();
 
   const tabs: { id: Tab; label: string; icon: string }[] = [
