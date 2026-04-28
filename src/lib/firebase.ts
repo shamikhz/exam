@@ -19,7 +19,7 @@ const firebaseConfig = {
 const isConfigured = !!firebaseConfig.apiKey;
 const app = (!getApps().length && isConfigured) 
   ? initializeApp(firebaseConfig) 
-  : (getApps().length ? getApp() : null);
+  : (getApps().length ? getApp() : undefined);
 
 // Dummy auth/db if not configured (to prevent crashes during pre-render)
 const auth = app ? getAuth(app) : {} as any;
@@ -32,7 +32,7 @@ const storage = app ? getStorage(app) : {} as any;
 let analytics = null;
 if (typeof window !== "undefined") {
   isSupported().then((supported) => {
-    if (supported) {
+    if (supported && app) {
       analytics = getAnalytics(app);
     }
   });
