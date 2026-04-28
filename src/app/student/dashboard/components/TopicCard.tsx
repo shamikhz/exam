@@ -39,7 +39,6 @@ export function TopicCard({
       <h3 className={styles.topicName}>{topic.name}</h3>
       <p className={styles.topicDesc}>{topic.description}</p>
       <div className={styles.topicMeta}>
-        <span className={styles.topicQCount}>❓ {topic.questionCount} questions</span>
         {lastPercent !== null && (
           <span className={styles.topicLastScore} style={{ color: lastPercent >= 60 ? '#10b981' : '#ef4444' }}>
             Last: {lastPercent}%
