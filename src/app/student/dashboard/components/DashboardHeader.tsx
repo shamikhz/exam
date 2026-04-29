@@ -39,17 +39,16 @@ export function DashboardHeader({
   return (
     <header className={styles.header}>
       <div className={styles.headerLeft}>
-        <div 
-          className={styles.logoClickable} 
-          onClick={onBack}
-          style={{ cursor: view !== 'dashboard' ? 'pointer' : 'default' }}
-        >
-          <span className={styles.logo}>🎓</span>
-          <div className={styles.logoTextWrapper}>
-            <span className={styles.logoText}>OptimaSkill</span>
-            <span className={styles.logoTagline}>the best skill</span>
-          </div>
+        <span className={styles.logo}>🎓</span>
+        <div className={styles.logoTextWrapper}>
+          <span className={styles.logoText}>OptimaSkill</span>
+          <span className={styles.logoTagline}>the best skill</span>
         </div>
+        {view !== 'dashboard' && (
+          <button onClick={onBack} className={styles.backBtn}>
+            ← Back
+          </button>
+        )}
       </div>
       <div className={styles.headerRight}>
         {view === 'exam' && examStarted && (

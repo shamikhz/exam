@@ -110,14 +110,6 @@ export default function StudentDashboard() {
       />
 
       <main className={styles.main}>
-        {view !== 'dashboard' && (
-          <button 
-            onClick={() => setView('dashboard')} 
-            className={styles.bodyBackBtn}
-          >
-            ← Back to Dashboard
-          </button>
-        )}
         {/* ================== DASHBOARD VIEW ================== */}
         {view === 'dashboard' && (
           <div className={styles.dashContent}>
