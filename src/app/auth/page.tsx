@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loginAny, loginWithoutPassword, register, getCurrentUser, seedDefaultData, checkUserExists, finalizeSocialLogin, type AuthState } from '@/lib/storage';
+import { loginAny, loginWithoutPassword, register, getCurrentUser, checkUserExists, finalizeSocialLogin, type AuthState } from '@/lib/storage';
 import { useTheme } from '@/lib/ThemeProvider';
 import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -33,13 +33,6 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
-  // Optimized startup: Check for user before showing seeding state
-  const [seeding, setSeeding] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return !getCurrentUser();
-    }
-    return true;
-  });
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -47,18 +40,6 @@ export default function AuthPage() {
       router.replace(user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard');
       return;
     }
-
-    // Heavy init (seeding) happens in the background only if needed
-    const init = async () => {
-      try {
-        await seedDefaultData();
-      } catch (err) {
-        console.error("Failed to seed data:", err);
-      } finally {
-        setSeeding(false);
-      }
-    };
-    init();
 
     const searchParams = new URLSearchParams(window.location.search);
     const initialRole = searchParams.get('role');
@@ -195,17 +176,6 @@ export default function AuthPage() {
     } finally {
       setSocialLoading(null);
     }
-  }
-
-  if (seeding) {
-    return (
-      <div className={styles.page} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div className={styles.spinner} style={{ margin: '0 auto 1rem' }} />
-          <p style={{ opacity: 0.7 }}>Loading OptimaSkill...</p>
-        </div>
-      </div>
-    );
   }
 
   return (

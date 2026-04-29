@@ -62,8 +62,22 @@ export default function StudentDashboard() {
   // openResultReview now awaits async getQuestionsByTopic
   const openResultReview = async (result: ExamResult) => {
     const qs = await getQuestionsByTopic(result.topicId);
-    const topic = topics.find((t) => t.id === result.topicId) || null;
-    if (topic) openReview(result, qs, topic);
+    let topic = topics.find((t) => t.id === result.topicId) || null;
+
+    // Fallback for orphaned results where the topic has been deleted
+    if (!topic) {
+      topic = {
+        id: result.topicId,
+        name: 'Deleted Topic',
+        description: 'This topic has been removed.',
+        icon: '🗑️',
+        difficulty: 'Medium',
+        createdAt: result.completedAt,
+        questionCount: qs.length,
+      };
+    }
+
+    openReview(result, qs, topic);
   };
 
   const formatTime = (secs: number) => {
@@ -186,12 +200,12 @@ export default function StudentDashboard() {
                       t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                       t.description.toLowerCase().includes(searchQuery.toLowerCase())
                     ).length === 0 && (
-                      <div className={styles.emptyState}>
-                        <span style={{ fontSize: '3rem' }}>🔍</span>
-                        <p>No topics match &quot;{searchQuery}&quot;</p>
-                        <button onClick={() => setSearchQuery('')} className={styles.clearBtn}>Clear Search</button>
-                      </div>
-                    )}
+                        <div className={styles.emptyState}>
+                          <span style={{ fontSize: '3rem' }}>🔍</span>
+                          <p>No topics match &quot;{searchQuery}&quot;</p>
+                          <button onClick={() => setSearchQuery('')} className={styles.clearBtn}>Clear Search</button>
+                        </div>
+                      )}
                   </div>
                 </section>
 

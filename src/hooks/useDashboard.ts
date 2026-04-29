@@ -13,15 +13,28 @@ export function useDashboard(requiredRole: 'admin' | 'student') {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const user = getCurrentUser();
-    if (!user || user.role !== requiredRole) {
-      router.replace('/auth');
-      return;
-    }
-    setUserName(user.name);
-    setUserEmail(user.email);
-    setUserAvatar(user.avatar || null);
-    setUserId(user.userId);
+    const checkUser = () => {
+      const user = getCurrentUser();
+      if (!user || user.role !== requiredRole) {
+        router.replace('/auth');
+        return;
+      }
+      setUserName(user.name);
+      setUserEmail(user.email);
+      setUserAvatar(user.avatar || null);
+      setUserId(user.userId);
+    };
+
+    checkUser();
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'exam_auth') {
+        checkUser();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [router, requiredRole]);
 
   function handleLogout() {

@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState(false);
   const [userName, setUserName] = useState('');
   const [role, setRole] = useState<'admin' | 'student'>('student');
-  
+
   // Form state
   const [formData, setFormData] = useState({
     name: '',
@@ -117,12 +117,12 @@ export default function ProfilePage() {
               <label htmlFor="avatar-upload" className={styles.editBtn} title="Change Avatar">
                 <span className={styles.editIcon}>✏️</span>
               </label>
-              <input 
-                id="avatar-upload" 
-                type="file" 
-                accept="image/*" 
-                onChange={handleFileChange} 
-                className={styles.hiddenInput} 
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className={styles.hiddenInput}
                 style={{ display: 'none' }}
               />
             </div>
@@ -144,7 +144,7 @@ export default function ProfilePage() {
                 required
               />
             </div>
-            
+
             <div className={styles.inputBlock}>
               <label className={styles.label} htmlFor="email">Email Address (Read Only)</label>
               <input
@@ -199,7 +199,7 @@ export default function ProfilePage() {
                   ✅ Profile updated successfully! Changes are synced.
                 </div>
               )}
-              
+
               <div className={styles.actions}>
                 <Link href={dashboardLink} className={styles.cancelBtn}>
                   Cancel

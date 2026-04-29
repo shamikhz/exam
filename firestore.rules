@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Function to check if user is signed in
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Function to check if user is an admin
+    // Checks if the requesting user's document has the role 'admin'
+    function isAdmin() {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // USERS COLLECTION
+    match /users/{userId} {
+      // Anyone can read a user profile
+      allow read: if isAuthenticated();
+      
+      // Users can create their own profile, but CANNOT set themselves as admin
+      allow create: if isAuthenticated() && 
+                    request.auth.uid == userId && 
+                    request.resource.data.role == 'student';
+                    
+      // Users can update their own profile, but CANNOT change their role
+      allow update: if isAuthenticated() && 
+                    request.auth.uid == userId && 
+                    (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+                    
+      // Admins have full access to users
+      allow create, update, delete: if isAdmin();
+    }
+
+    // TOPICS COLLECTION
+    match /topics/{topicId} {
+      // Any authenticated user can view topics
+      allow read: if isAuthenticated();
+      
+      // Only admins can modify topics
+      allow create, update, delete: if isAdmin();
+    }
+
+    // QUESTIONS COLLECTION
+    match /questions/{questionId} {
+      // Students can read questions to take exams
+      allow read: if isAuthenticated();
+      
+      // Only admins can modify questions
+      allow create, update, delete: if isAdmin();
+    }
+
+    // RESULTS COLLECTION
+    match /results/{resultId} {
+      // Students can read their own results. Admins can read all.
+      allow read: if isAuthenticated() && (resource.data.studentId == request.auth.uid || isAdmin());
+      
+      // Students can create a result for themselves
+      allow create: if isAuthenticated() && request.resource.data.studentId == request.auth.uid;
+      
+      // Students can delete their own results (as per app functionality)
+      allow delete: if isAuthenticated() && resource.data.studentId == request.auth.uid;
+      
+      // Admins have full access
+      allow update, delete: if isAdmin();
+    }
+  }
+}

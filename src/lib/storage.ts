@@ -10,7 +10,7 @@
 import {
   collection, doc,
   getDocs, getDoc, setDoc, deleteDoc, updateDoc,
-  query, where, limit, writeBatch,
+  query, where, limit, writeBatch, getCountFromServer,
 } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
@@ -81,73 +81,6 @@ const topicsCol = () => collection(db, 'topics');
 const questionsCol = () => collection(db, 'questions');
 const resultsCol = () => collection(db, 'results');
 
-const SEEDED_KEY = 'exam_db_seeded';
-
-// ---- Seed default data on first boot ----
-export async function seedDefaultData(): Promise<void> {
-  if (typeof window === 'undefined') return;
-
-  // Optimized: check local flag first to skip all network requests
-  if (localStorage.getItem(SEEDED_KEY)) return;
-
-  // Always ensure demo Firebase Auth accounts exist
-  const demoAccounts = [
-    { email: 'admin@examapp.com',   password: 'admin123'   },
-    { email: 'student@examapp.com', password: 'student123' },
-  ];
-  for (const { email, password } of demoAccounts) {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch {
-      // auth/email-already-in-use → already in Firebase Auth
-    }
-  }
-
-  // Seed Firestore only once
-  try {
-    const q = query(usersCol(), limit(1));
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      localStorage.setItem(SEEDED_KEY, 'true');
-      return;
-    }
-
-    // Admin profile
-    await setDoc(doc(db, 'users', 'admin-1'), {
-      id: 'admin-1',
-      name: 'Admin User',
-      email: 'admin@examapp.com',
-      role: 'admin',
-      createdAt: new Date().toISOString(),
-    } as User);
-
-    // Seed topics
-    const defaultTopics: Topic[] = [
-      { id: 'topic-1', name: 'JavaScript Fundamentals', description: 'Core concepts of JavaScript including variables, functions, and closures.', icon: '⚡', difficulty: 'Easy', createdAt: new Date().toISOString() },
-      { id: 'topic-2', name: 'React & Next.js', description: 'Modern React patterns, hooks, and Next.js App Router.', icon: '⚛️', difficulty: 'Medium', createdAt: new Date().toISOString() },
-      { id: 'topic-3', name: 'Data Structures', description: 'Arrays, linked lists, trees, graphs, and algorithm complexity.', icon: '🧮', difficulty: 'Hard', createdAt: new Date().toISOString() },
-    ];
-    for (const t of defaultTopics) {
-      await setDoc(doc(db, 'topics', t.id), t);
-    }
-
-    // Seed questions
-    const defaultQuestions: Question[] = [
-      { id: 'q-1', topicId: 'topic-1', text: 'Which keyword declares a block-scoped variable in JavaScript?', options: ['var', 'let', 'const', 'Both let and const'], correctAnswer: 3, explanation: 'Both `let` and `const` are block-scoped. `var` is function-scoped.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-2', topicId: 'topic-1', text: 'What does `typeof null` return?', options: ['null', 'undefined', 'object', 'string'], correctAnswer: 2, explanation: '`typeof null` returns "object" — a known historical quirk in JavaScript.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-3', topicId: 'topic-1', text: 'Which method is used to remove the last element from an array?', options: ['shift()', 'pop()', 'splice()', 'slice()'], correctAnswer: 1, explanation: '`pop()` removes and returns the last element of an array.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-4', topicId: 'topic-2', text: 'Which React hook is used to perform side effects?', options: ['useState', 'useEffect', 'useContext', 'useRef'], correctAnswer: 1, explanation: '`useEffect` is used for side effects like data fetching and subscriptions.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-5', topicId: 'topic-2', text: 'In Next.js App Router, pages are Server Components by default.', options: ['True', 'False', 'Only in production', 'Only with TypeScript'], correctAnswer: 0, explanation: 'Pages are Server Components by default. Add `"use client"` to opt-in to Client Components.', points: 10, createdAt: new Date().toISOString() },
-      { id: 'q-6', topicId: 'topic-3', text: 'What is the time complexity of binary search?', options: ['O(n)', 'O(n²)', 'O(log n)', 'O(1)'], correctAnswer: 2, explanation: 'Binary search halves the search space each iteration, giving O(log n) complexity.', points: 15, createdAt: new Date().toISOString() },
-    ];
-    for (const q of defaultQuestions) {
-      await setDoc(doc(db, 'questions', q.id), q);
-    }
-    localStorage.setItem(SEEDED_KEY, 'true');
-  } catch (err) {
-    console.warn("Skipping Firestore seeding (likely blocked by security rules):", err);
-  }
-}
 
 // ============================
 // USERS
@@ -253,12 +186,12 @@ export async function loginWithoutPassword(email: string): Promise<AuthState | n
 export async function finalizeSocialLogin(firebaseUser: any, role: 'admin' | 'student'): Promise<AuthState> {
   const email = firebaseUser.email || `${firebaseUser.uid}@social.examapp.com`;
   const normalised = email.toLowerCase().trim();
-  
+
   const q = query(usersCol(), where('email', '==', normalised));
   const snap = await getDocs(q);
-  
+
   let finalUser: User;
-  
+
   if (snap.empty) {
     // Create new user in Firestore
     finalUser = {
@@ -349,18 +282,20 @@ export function getCurrentUser(): AuthState | null {
 // ============================
 
 export async function getTopics(): Promise<Topic[]> {
-  const [topicsSnap, questionsSnap] = await Promise.all([
-    getDocs(topicsCol()),
-    getDocs(questionsCol()),
-  ]);
-  const allQuestions = questionsSnap.docs.map(d => d.data() as Question);
-  return topicsSnap.docs.map(d => {
-    const topic = d.data() as Topic;
-    return {
-      ...topic,
-      questionCount: allQuestions.filter(q => q.topicId === topic.id).length,
-    };
-  });
+  const topicsSnap = await getDocs(topicsCol());
+
+  const topicsWithCounts = await Promise.all(
+    topicsSnap.docs.map(async (d) => {
+      const topic = d.data() as Topic;
+      const q = query(questionsCol(), where('topicId', '==', topic.id));
+      const countSnap = await getCountFromServer(q);
+      return {
+        ...topic,
+        questionCount: countSnap.data().count,
+      };
+    })
+  );
+  return topicsWithCounts;
 }
 
 export async function saveTopic(topic: Partial<Topic> & { name: string }): Promise<Topic> {
@@ -382,10 +317,16 @@ export async function saveTopic(topic: Partial<Topic> & { name: string }): Promi
 export async function deleteTopic(id: string): Promise<void> {
   await deleteDoc(doc(db, 'topics', id));
   // Cascade: delete all questions for this topic
-  const q = query(questionsCol(), where('topicId', '==', id));
-  const snap = await getDocs(q);
+  const qQuestions = query(questionsCol(), where('topicId', '==', id));
+  const snapQuestions = await getDocs(qQuestions);
+
+  // Cascade: delete all results for this topic
+  const qResults = query(resultsCol(), where('topicId', '==', id));
+  const snapResults = await getDocs(qResults);
+
   const batch = writeBatch(db);
-  snap.docs.forEach(d => batch.delete(d.ref));
+  snapQuestions.docs.forEach(d => batch.delete(d.ref));
+  snapResults.docs.forEach(d => batch.delete(d.ref));
   await batch.commit();
 }
 
@@ -405,10 +346,16 @@ export async function getQuestionsByTopic(topicId: string): Promise<Question[]> 
 }
 
 export async function saveQuestion(question: Partial<Question> & { topicId: string }): Promise<Question> {
+  if (question.options && question.correctAnswer !== undefined) {
+    if (question.correctAnswer < 0 || question.correctAnswer >= question.options.length) {
+      throw new Error("Invalid correct answer index.");
+    }
+  }
+
   // 1. Server-side duplicate check (as second line of defense)
   if (!question.id && question.text) {
     const q = query(
-      questionsCol(), 
+      questionsCol(),
       where('topicId', '==', question.topicId),
       where('text', '==', question.text.trim())
     );
@@ -463,18 +410,40 @@ export async function getResultsByStudent(studentId: string): Promise<ExamResult
 }
 
 export async function saveResult(result: Partial<ExamResult>): Promise<ExamResult> {
-  if (!result.id) {
+  // Validate and compute score server-side
+  if (!result.topicId || !result.answers) {
+    throw new Error("Missing required fields for saving result.");
+  }
+
+  const questions = await getQuestionsByTopic(result.topicId);
+  let computedScore = 0;
+  let computedTotal = 0;
+
+  questions.forEach((q, i) => {
+    computedTotal += q.points;
+    if (result.answers![i] === q.correctAnswer) {
+      computedScore += q.points;
+    }
+  });
+
+  const finalResult: Partial<ExamResult> = {
+    ...result,
+    score: computedScore,
+    totalPoints: computedTotal,
+  };
+
+  if (!finalResult.id) {
     const newDoc = doc(resultsCol());
     const fullResult: ExamResult = {
-      ...result as ExamResult,
+      ...finalResult as ExamResult,
       id: newDoc.id,
       completedAt: new Date().toISOString()
     };
     await setDoc(newDoc, fullResult);
     return fullResult;
   } else {
-    await setDoc(doc(db, 'results', result.id), result as ExamResult);
-    return result as ExamResult;
+    await setDoc(doc(db, 'results', finalResult.id), finalResult as ExamResult);
+    return finalResult as ExamResult;
   }
 }
 

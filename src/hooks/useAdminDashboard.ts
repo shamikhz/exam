@@ -143,8 +143,8 @@ export function useAdminDashboard() {
     setQuestionError('');
 
     // Duplicate check: check if question text already exists in this topic
-    const isDuplicate = questions.some(q => 
-      q.topicId === questionForm.topicId && 
+    const isDuplicate = questions.some(q =>
+      q.topicId === questionForm.topicId &&
       q.text.trim().toLowerCase() === questionForm.text.trim().toLowerCase() &&
       q.id !== editingQuestion?.id
     );
@@ -176,7 +176,7 @@ export function useAdminDashboard() {
   async function handleBulkUpload(file: File, topicId: string) {
     setIsUploading(topicId);
     setTopicError('');
-    
+
     try {
       let text = '';
       if (file.name.endsWith('.docx')) {
@@ -190,7 +190,7 @@ export function useAdminDashboard() {
       // Try to find JSON in the text (in case there's extra text in the Word doc)
       const jsonStart = text.indexOf('[');
       const jsonEnd = text.lastIndexOf(']') + 1;
-      
+
       if (jsonStart === -1 || jsonEnd === 0) {
         throw new Error("Could not find a valid JSON list of questions in the file.");
       }
@@ -221,8 +221,8 @@ export function useAdminDashboard() {
         if (!questionText || !options || !Array.isArray(options) || options.length < 2) continue;
 
         // Duplicate check (against existing questions)
-        const isDuplicate = questions.some(ex => 
-          ex.topicId === topicId && 
+        const isDuplicate = questions.some(ex =>
+          ex.topicId === topicId &&
           ex.text.trim().toLowerCase() === questionText.trim().toLowerCase()
         );
 
@@ -245,7 +245,7 @@ export function useAdminDashboard() {
       }
 
       await saveQuestionsBatch(validQuestions);
-      
+
       // Show success state briefly
       setUploadSuccess(topicId);
       setTimeout(() => setUploadSuccess(null), 3000);

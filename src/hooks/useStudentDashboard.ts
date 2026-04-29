@@ -97,23 +97,75 @@ export function useExam(
   const [timeLeft, setTimeLeft] = useState(0);
   const [examStarted, setExamStarted] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  const durationRef = useRef<number>(0);
+
+  const EXAM_STATE_KEY = `exam_ongoing_${userId}`;
+
+  useEffect(() => {
+    const savedState = localStorage.getItem(EXAM_STATE_KEY);
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState);
+        const elapsed = Math.floor((Date.now() - parsed.startTime) / 1000);
+        const remaining = Math.max(0, parsed.duration - elapsed);
+
+        if (remaining > 0) {
+          setExamTopic(parsed.topic);
+          setExamQuestions(parsed.qs);
+          setSelectedAnswers(parsed.answers);
+          setCurrentQ(parsed.currentQ || 0);
+          durationRef.current = parsed.duration;
+          startTimeRef.current = parsed.startTime;
+          setTimeLeft(remaining);
+          setExamStarted(true);
+          // Delay onStart slightly so the view can update
+          setTimeout(() => onStart?.(), 0);
+        } else {
+          localStorage.removeItem(EXAM_STATE_KEY);
+        }
+      } catch (err) {
+        localStorage.removeItem(EXAM_STATE_KEY);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [EXAM_STATE_KEY]);
+
+  useEffect(() => {
+    if (!examStarted) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = ''; // Required for Chrome
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [examStarted]);
+
+  useEffect(() => {
+    if (examStarted && examTopic && examQuestions.length > 0) {
+      localStorage.setItem(EXAM_STATE_KEY, JSON.stringify({
+        topic: examTopic,
+        qs: examQuestions,
+        answers: selectedAnswers,
+        currentQ,
+        startTime: startTimeRef.current,
+        duration: durationRef.current
+      }));
+    }
+  }, [examStarted, selectedAnswers, currentQ, examTopic, examQuestions, EXAM_STATE_KEY]);
 
   const submitExam = useCallback(async () => {
     if (timerRef.current) clearInterval(timerRef.current);
     if (!examTopic) return;
 
-    const score = examQuestions.reduce((acc, q, i) => {
-      return selectedAnswers[i] === q.correctAnswer ? acc + q.points : acc;
-    }, 0);
-    const totalPoints = examQuestions.reduce((acc, q) => acc + q.points, 0);
+    localStorage.removeItem(`exam_ongoing_${userId}`);
 
+    // Send only necessary data; the server calculates score and totalPoints.
     const result: Partial<ExamResult> = {
       studentId: userId,
       topicId: examTopic.id,
-      score,
-      totalPoints,
       answers: selectedAnswers,
-      timeTaken: examQuestions.length * 60 - timeLeft,
+      timeTaken: durationRef.current - timeLeft,
     };
 
     const savedResult = await saveResult(result);
@@ -131,7 +183,10 @@ export function useExam(
     setExamQuestions(qs);
     setSelectedAnswers(new Array(qs.length).fill(-1));
     setCurrentQ(0);
-    setTimeLeft(qs.length * 60);
+    const totalTime = qs.length * 60;
+    durationRef.current = totalTime;
+    startTimeRef.current = Date.now();
+    setTimeLeft(totalTime);
     setExamStarted(true);
     onStart?.();
   }
@@ -139,13 +194,15 @@ export function useExam(
   useEffect(() => {
     if (!examStarted) return;
     timerRef.current = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          submitExam();
-          return 0;
-        }
-        return t - 1;
-      });
+      if (!startTimeRef.current) return;
+      const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
+      const remaining = Math.max(0, durationRef.current - elapsed);
+      setTimeLeft(remaining);
+
+      if (remaining <= 0) {
+        if (timerRef.current) clearInterval(timerRef.current);
+        submitExam();
+      }
     }, 1000);
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [examStarted, submitExam]);
