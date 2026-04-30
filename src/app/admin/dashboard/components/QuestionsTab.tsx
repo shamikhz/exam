@@ -30,6 +30,26 @@ export function QuestionsTab({
         <div className={styles.tabHeaderLeft}>
           <h3>Manage Questions</h3>
           <select
+            id="topic-subject-filter"
+            className={styles.filterSelect}
+            onChange={(e) => {
+              const subject = e.target.value;
+              if (subject === 'all') {
+                setSelectedTopicFilter('all');
+              } else {
+                // Find first topic in this subject and select it? 
+                // Or just filter the topics dropdown?
+                setSelectedTopicFilter('all');
+              }
+            }}
+            defaultValue="all"
+          >
+            <option value="all">All Subjects</option>
+            {Array.from(new Set(topics.map(t => t.subject).filter(Boolean))).sort().map(s => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          <select
             id="topic-filter"
             value={selectedTopicFilter}
             onChange={(e) => setSelectedTopicFilter(e.target.value)}
@@ -38,7 +58,7 @@ export function QuestionsTab({
             <option value="all">All Topics</option>
             {topics.map((t) => (
               <option key={t.id} value={t.id}>
-                {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? '🖼️' : t.icon} {t.name}
+                {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? '🖼️' : t.icon} {t.name} {t.subject ? `(${t.subject})` : ''}
               </option>
             ))}
           </select>
