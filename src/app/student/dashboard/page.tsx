@@ -34,6 +34,7 @@ export default function StudentDashboard() {
 
   const {
     view, setView, topics, myResults, searchQuery, setSearchQuery,
+    selectedSubject, setSelectedSubject,
     resultsPage, setResultsPage, RESULTS_PER_PAGE,
     isLoading, refreshData, handleDeleteResult, stats
   } = useStudentDashboard(userId);
@@ -141,6 +142,20 @@ export default function StudentDashboard() {
               </div>
             </div>
 
+            <div className={styles.subjectBar}>
+              <div className={styles.subjectScroll}>
+                {['All', ...Array.from(new Set(topics.map(t => t.subject).filter(Boolean))).sort()].map((s) => (
+                  <button
+                    key={s}
+                    className={`${styles.subjectBtn} ${selectedSubject === s ? styles.subjectBtnActive : ''}`}
+                    onClick={() => setSelectedSubject(s)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className={styles.statsRow}>
               <StatCard
                 icon="📋" value={stats.totalExams} label="Exams Taken"
@@ -196,10 +211,12 @@ export default function StudentDashboard() {
 
                   <div className={styles.topicsGrid}>
                     {topics
-                      .filter(t =>
-                        t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        t.description.toLowerCase().includes(searchQuery.toLowerCase())
-                      )
+                      .filter(t => {
+                        const matchesSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                            t.description.toLowerCase().includes(searchQuery.toLowerCase());
+                        const matchesSubject = selectedSubject === 'All' || t.subject === selectedSubject;
+                        return matchesSearch && matchesSubject;
+                      })
                       .map((t) => (
                         <TopicCard
                           key={t.id} topic={t} myResults={myResults}
@@ -215,10 +232,12 @@ export default function StudentDashboard() {
                       </div>
                     )}
 
-                    {topics.length > 0 && topics.filter(t =>
-                      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      t.description.toLowerCase().includes(searchQuery.toLowerCase())
-                    ).length === 0 && (
+                    {topics.length > 0 && topics.filter(t => {
+                      const matchesSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                          t.description.toLowerCase().includes(searchQuery.toLowerCase());
+                      const matchesSubject = selectedSubject === 'All' || t.subject === selectedSubject;
+                      return matchesSearch && matchesSubject;
+                    }).length === 0 && (
                         <div className={styles.emptyState}>
                           <span style={{ fontSize: '3rem' }}>🔍</span>
                           <p>No topics match &quot;{searchQuery}&quot;</p>

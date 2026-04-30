@@ -38,6 +38,7 @@ export interface Topic {
   description: string;
   icon: string;
   difficulty: 'Easy' | 'Medium' | 'Hard';
+  subject: string;
   createdAt: string;
   questionCount?: number;
 }

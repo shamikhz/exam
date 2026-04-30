@@ -20,6 +20,7 @@ export function useStudentDashboard(userId: string) {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [myResults, setMyResults] = useState<ExamResult[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('All');
   const [resultsPage, setResultsPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const RESULTS_PER_PAGE = 5;
@@ -70,6 +71,8 @@ export function useStudentDashboard(userId: string) {
     myResults,
     searchQuery,
     setSearchQuery,
+    selectedSubject,
+    setSelectedSubject,
     resultsPage,
     setResultsPage,
     RESULTS_PER_PAGE,

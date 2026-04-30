@@ -63,6 +63,23 @@ export function Modals({
                 <input id="topic-name" className={styles.inputField} placeholder="e.g. JavaScript Fundamentals" value={topicForm.name} onChange={(e) => setTopicForm({ ...topicForm, name: e.target.value })} required />
               </div>
               <div className={styles.inputBlock}>
+                <label htmlFor="topic-subject">Subject</label>
+                <input 
+                  id="topic-subject" 
+                  className={styles.inputField} 
+                  placeholder="e.g. Computer Science, Mathematics" 
+                  value={topicForm.subject} 
+                  onChange={(e) => setTopicForm({ ...topicForm, subject: e.target.value })} 
+                  list="subject-list"
+                  required 
+                />
+                <datalist id="subject-list">
+                  {Array.from(new Set(topics.map(t => t.subject).filter(Boolean))).sort().map(s => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
+              </div>
+              <div className={styles.inputBlock}>
                 <label htmlFor="topic-desc">Description</label>
                 <textarea id="topic-desc" className={`${styles.inputField} ${styles.textarea}`} placeholder="Describe what this topic covers..." value={topicForm.description} onChange={(e) => setTopicForm({ ...topicForm, description: e.target.value })} required />
               </div>

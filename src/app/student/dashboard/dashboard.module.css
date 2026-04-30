@@ -279,6 +279,55 @@
   gap: 2rem;
 }
 
+.subjectBar {
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
+}
+
+.subjectScroll {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.subjectScroll::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.subjectBtn {
+  padding: 0.6rem 1.25rem;
+  border-radius: 100px;
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.subjectBtn:hover {
+  background: var(--color-border);
+  color: var(--color-text);
+  transform: translateY(-1px);
+}
+
+.subjectBtnActive {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.subjectBtnActive:hover {
+  color: #ffffff;
+  background: var(--color-accent);
+}
+
 .welcome {
   display: flex;
   justify-content: space-between;

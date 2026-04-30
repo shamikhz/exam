@@ -30,6 +30,7 @@ export default function AdminDashboard() {
     topics, questions, results, users,
     isLoading,
     selectedTopicView, setSelectedTopicView,
+    selectedSubjectFilter, setSelectedSubjectFilter,
     selectedTopicFilter, setSelectedTopicFilter,
     studentSearchQuery, setStudentSearchQuery,
     studentPage, setStudentPage, STUDENTS_PER_PAGE,
@@ -145,6 +146,8 @@ export default function AdminDashboard() {
                 <TopicsTab
                   topics={topics} selectedTopicView={selectedTopicView}
                   setSelectedTopicView={setSelectedTopicView}
+                  selectedSubjectFilter={selectedSubjectFilter}
+                  setSelectedSubjectFilter={setSelectedSubjectFilter}
                   onAddTopic={() => openTopicForm()}
                   onEditTopic={openTopicForm}
                   onDeleteTopic={(id) => setDeleteConfirm({ type: 'topic', id })}

@@ -20,6 +20,7 @@ export function useAdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [selectedTopicView, setSelectedTopicView] = useState('all');
+  const [selectedSubjectFilter, setSelectedSubjectFilter] = useState('all');
   const [selectedTopicFilter, setSelectedTopicFilter] = useState('all');
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [studentPage, setStudentPage] = useState(1);
@@ -28,7 +29,7 @@ export function useAdminDashboard() {
   // Modals state
   const [showTopicForm, setShowTopicForm] = useState(false);
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
-  const [topicForm, setTopicForm] = useState({ name: '', description: '', icon: '📚', difficulty: 'Easy' as Topic['difficulty'] });
+  const [topicForm, setTopicForm] = useState({ name: '', description: '', icon: '📚', difficulty: 'Easy' as Topic['difficulty'], subject: '' });
   const [topicError, setTopicError] = useState('');
   const [questionError, setQuestionError] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -65,10 +66,16 @@ export function useAdminDashboard() {
   function openTopicForm(topic?: Topic) {
     if (topic) {
       setEditingTopic(topic);
-      setTopicForm({ name: topic.name, description: topic.description, icon: topic.icon, difficulty: topic.difficulty });
+      setTopicForm({ 
+        name: topic.name, 
+        description: topic.description, 
+        icon: topic.icon, 
+        difficulty: topic.difficulty,
+        subject: topic.subject || ''
+      });
     } else {
       setEditingTopic(null);
-      setTopicForm({ name: '', description: '', icon: '📚', difficulty: 'Easy' });
+      setTopicForm({ name: '', description: '', icon: '📚', difficulty: 'Easy', subject: '' });
     }
     setTopicError('');
     setShowTopicForm(true);
@@ -97,6 +104,7 @@ export function useAdminDashboard() {
       const topicData: Partial<Topic> = {
         ...topicForm,
         name: topicForm.name.trim(),
+        subject: topicForm.subject.trim() || 'General', // Fallback to 'General' if empty
       };
       if (editingTopic) {
         topicData.id = editingTopic.id;
@@ -293,6 +301,7 @@ export function useAdminDashboard() {
     topics, questions, results, users,
     isLoading,
     selectedTopicView, setSelectedTopicView,
+    selectedSubjectFilter, setSelectedSubjectFilter,
     selectedTopicFilter, setSelectedTopicFilter,
     studentSearchQuery, setStudentSearchQuery,
     studentPage, setStudentPage, STUDENTS_PER_PAGE,

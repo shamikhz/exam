@@ -7,6 +7,8 @@ interface TopicsTabProps {
   topics: Topic[];
   selectedTopicView: string;
   setSelectedTopicView: (val: string) => void;
+  selectedSubjectFilter: string;
+  setSelectedSubjectFilter: (val: string) => void;
   onAddTopic: () => void;
   onEditTopic: (topic: Topic) => void;
   onDeleteTopic: (id: string) => void;
@@ -21,6 +23,8 @@ export function TopicsTab({
   topics,
   selectedTopicView,
   setSelectedTopicView,
+  selectedSubjectFilter,
+  setSelectedSubjectFilter,
   onAddTopic,
   onEditTopic,
   onDeleteTopic,
@@ -30,7 +34,13 @@ export function TopicsTab({
   onBulkUpload,
   styles
 }: TopicsTabProps) {
-  const filteredTopics = topics.filter(t => selectedTopicView === 'all' || t.id === selectedTopicView);
+  const subjects = Array.from(new Set(topics.map(t => t.subject).filter(Boolean))).sort();
+  
+  const filteredTopics = topics.filter(t => {
+    const matchesSubject = selectedSubjectFilter === 'all' || t.subject === selectedSubjectFilter;
+    const matchesTopic = selectedTopicView === 'all' || t.id === selectedTopicView;
+    return matchesSubject && matchesTopic;
+  });
 
   return (
     <div className={styles.tabContent}>
@@ -38,17 +48,33 @@ export function TopicsTab({
         <div className={styles.tabHeaderLeft}>
           <h3>Manage Topics</h3>
           <select
+            id="topics-subject-filter"
+            value={selectedSubjectFilter}
+            onChange={(e) => {
+              setSelectedSubjectFilter(e.target.value);
+              setSelectedTopicView('all'); // Reset topic filter when subject changes
+            }}
+            className={styles.filterSelect}
+          >
+            <option value="all">All Subjects</option>
+            {subjects.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          <select
             id="topics-tab-filter"
             value={selectedTopicView}
             onChange={(e) => setSelectedTopicView(e.target.value)}
             className={styles.filterSelect}
           >
             <option value="all">All Topics</option>
-            {topics.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? '🖼️' : t.icon} {t.name}
-              </option>
-            ))}
+            {topics
+              .filter(t => selectedSubjectFilter === 'all' || t.subject === selectedSubjectFilter)
+              .map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? '🖼️' : t.icon} {t.name}
+                </option>
+              ))}
           </select>
         </div>
         <button id="add-topic-btn" onClick={onAddTopic} className={styles.addBtn}>
