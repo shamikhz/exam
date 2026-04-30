@@ -53,11 +53,22 @@ export default function StudentDashboard() {
   const {
     examTopic, examQuestions, currentQ, setCurrentQ,
     selectedAnswers, timeLeft, examStarted,
-    startExam, selectAnswer, submitExam
+    startExam, selectAnswer, submitExam, resetExam
   } = useExam(userId, (result, qs, topic) => {
     refreshData(userId);
     openReview(result, qs, topic);
   }, () => setView('exam'));
+
+  const handleBack = () => {
+    if (view === 'exam' && examStarted) {
+      if (window.confirm('Are you sure you want to abandon the exam? Progress will not be saved.')) {
+        resetExam();
+        setView('dashboard');
+      }
+    } else {
+      setView('dashboard');
+    }
+  };
 
   // openResultReview now awaits async getQuestionsByTopic
   const openResultReview = async (result: ExamResult) => {
@@ -94,7 +105,7 @@ export default function StudentDashboard() {
     <div className={styles.page}>
       <DashboardHeader
         view={view}
-        onBack={() => setView('dashboard')}
+        onBack={handleBack}
         examStarted={examStarted}
         timeLeft={timeLeft}
         formatTime={formatTime}
@@ -110,6 +121,14 @@ export default function StudentDashboard() {
       />
 
       <main className={styles.main}>
+        {view !== 'dashboard' && (
+          <button 
+            onClick={handleBack} 
+            className={styles.bodyBackBtn}
+          >
+            ← Back to Dashboard
+          </button>
+        )}
         {/* ================== DASHBOARD VIEW ================== */}
         {view === 'dashboard' && (
           <div className={styles.dashContent}>

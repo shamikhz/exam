@@ -27,8 +27,8 @@ export function ExamView({
   return (
     <div className={styles.examView}>
       {/* Progress */}
-      <div className={styles.OptimaSkillgress}>
-        <div className={styles.OptimaSkillgressInfo}>
+      <div className={styles.progress}>
+        <div className={styles.progressInfo}>
           <span>
             {examTopic.icon && (examTopic.icon.startsWith('data:') || examTopic.icon.startsWith('http')) ? (
               <img src={examTopic.icon} alt={examTopic.name} className={styles.examTopicImg} />

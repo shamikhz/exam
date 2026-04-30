@@ -213,6 +213,17 @@ export function useExam(
     setSelectedAnswers(updated);
   }
 
+  const resetExam = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    localStorage.removeItem(EXAM_STATE_KEY);
+    setExamTopic(null);
+    setExamQuestions([]);
+    setSelectedAnswers([]);
+    setCurrentQ(0);
+    setTimeLeft(0);
+    setExamStarted(false);
+  }, [EXAM_STATE_KEY]);
+
   return {
     examTopic,
     examQuestions,
@@ -223,6 +234,7 @@ export function useExam(
     examStarted,
     startExam,
     selectAnswer,
-    submitExam
+    submitExam,
+    resetExam
   };
 }
