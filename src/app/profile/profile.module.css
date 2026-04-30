@@ -157,9 +157,51 @@
   gap: 2rem;
 }
 
+@media (max-width: 768px) {
+  .page {
+    padding: 1.5rem 1rem;
+  }
+  .card {
+    padding: 2rem;
+    gap: 2rem;
+  }
+  .title {
+    font-size: 1.75rem;
+  }
+}
+
 @media (max-width: 600px) {
   .form {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .profileHeader {
+    gap: 1.5rem;
+  }
+  .profileName {
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 1.5rem;
+  }
+  .profileHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  .profileInfo {
+    align-items: center;
+  }
+  .actions {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+  .saveBtn, .cancelBtn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
