@@ -185,17 +185,10 @@ export default function LandingPage() {
           <p className={styles.footerText}>© 2026 OptimaSkill. All rights reserved.</p>
         </div>
 
-        {/* 
-        <div className={styles.footerNewsletter}>
-          <h3 className={styles.footerHeading}>Subscribe to our newsletter</h3>
-          <div className={styles.footerInputGroup}>
-            <input type="email" placeholder="Enter your email" className={styles.footerInput} />
-            <button className={styles.footerSubmitBtn}>Subscribe</button>
-          </div>
-        </div>
-        */}
+
 
         <div className={styles.footerLinks}>
+          <Link href="/about-us">About Us</Link>
           <Link href="/privacy-policy">Privacy Policy</Link>
           <Link href="/terms-of-service">Terms of Service</Link>
           <Link href="/contact">Contact Us</Link>

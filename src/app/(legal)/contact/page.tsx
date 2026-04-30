@@ -48,7 +48,7 @@ export default function ContactPage() {
         {/* Contact cards */}
         <div className={styles.contactGrid}>
           <div className={styles.contactCard}>
-            <div className={styles.contactIcon}>📧</div>
+            <div className={styles.contactIcon}>💬</div>
             <div className={styles.contactCardTitle}>General Support</div>
             <div className={styles.contactCardText}>
               Have a question or need help getting started? Drop us a message and our team will be happy to assist you.
@@ -153,6 +153,7 @@ export default function ContactPage() {
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerLinks}>
+          <Link href="/about-us">About Us</Link>
           <Link href="/privacy-policy">Privacy Policy</Link>
           <Link href="/terms-of-service">Terms of Service</Link>
           <Link href="/contact">Contact Us</Link>

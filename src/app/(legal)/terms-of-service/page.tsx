@@ -128,7 +128,7 @@ export default function TermsOfServicePage() {
           <p className={styles.sectionText}>
             For questions regarding these Terms of Service, please visit our{' '}
             <Link href="/contact" style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Contact Us</Link>{' '}
-            page or email <strong>legal@optimaskill.app</strong>.
+            page.
           </p>
         </div>
       </div>
@@ -136,6 +136,7 @@ export default function TermsOfServicePage() {
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerLinks}>
+          <Link href="/about-us">About Us</Link>
           <Link href="/privacy-policy">Privacy Policy</Link>
           <Link href="/terms-of-service">Terms of Service</Link>
           <Link href="/contact">Contact Us</Link>

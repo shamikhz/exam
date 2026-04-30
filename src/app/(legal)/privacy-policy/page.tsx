@@ -121,8 +121,7 @@ export default function PrivacyPolicyPage() {
           <h2 className={styles.sectionTitle}>7. Contact Us</h2>
           <p className={styles.sectionText}>
             If you have any questions about this Privacy Policy or how your data is handled, 
-            please reach out via our <Link href="/contact" style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Contact Us</Link> page 
-            or email us directly at <strong>privacy@optimaskill.app</strong>.
+            please reach out via our <Link href="/contact" style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Contact Us</Link> page.
           </p>
         </div>
       </div>
@@ -130,6 +129,7 @@ export default function PrivacyPolicyPage() {
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerLinks}>
+          <Link href="/about-us">About Us</Link>
           <Link href="/privacy-policy">Privacy Policy</Link>
           <Link href="/terms-of-service">Terms of Service</Link>
           <Link href="/contact">Contact Us</Link>

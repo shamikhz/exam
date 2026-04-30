@@ -599,6 +599,34 @@
   font-size: 0.9rem;
 }
 
+.tabHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.exportBtn {
+  padding: 0.55rem 1.2rem;
+  background: var(--color-secondary);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.exportBtn:hover {
+  background: var(--color-dominant);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
 .resultsCount {
   font-size: 0.8rem;
   color: var(--color-text-muted);

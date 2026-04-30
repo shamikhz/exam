@@ -39,6 +39,45 @@ export function StudentsTab({
     studentPage * STUDENTS_PER_PAGE
   );
 
+    const handleExport = () => {
+    const studentsToExport = users
+      .filter((u) => u.role === 'student')
+      .map((u) => {
+        const studentResults = results.filter((r) => r.studentId === u.id);
+        const bestScore = studentResults.length > 0
+          ? Math.max(...studentResults.map((r) => Math.round((r.score / r.totalPoints) * 100)))
+          : 0;
+        return {
+          Name: u.name,
+          Email: u.email,
+          'Exams Taken': studentResults.length,
+          'Best Score (%)': studentResults.length === 0 ? 'N/A' : `${bestScore}%`,
+        };
+      });
+
+    if (studentsToExport.length === 0) {
+      alert('No student data to export.');
+      return;
+    }
+
+    const headers = Object.keys(studentsToExport[0]);
+    const csvContent = [
+      headers.join(','),
+      ...studentsToExport.map((s: any) => 
+        headers.map(h => `"${String(s[h]).replace(/"/g, '""')}"`).join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `optimaskill_students_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className={styles.tabContent}>
       <div className={styles.tabHeader}>
@@ -58,8 +97,13 @@ export function StudentsTab({
             />
           </div>
         </div>
-        <div className={styles.resultsCount}>
-          Total: {filteredStudents.length} students
+        <div className={styles.tabHeaderRight}>
+          <button onClick={handleExport} className={styles.exportBtn}>
+            📥 Export CSV
+          </button>
+          <div className={styles.resultsCount}>
+            Total: {filteredStudents.length} students
+          </div>
         </div>
       </div>
 
