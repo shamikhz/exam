@@ -32,9 +32,16 @@ export function TopicCard({
         ) : (
           <span className={styles.topicIcon}>{topic.icon}</span>
         )}
-        <span className={styles.diffBadge} style={{ background: `${difficultyColors[topic.difficulty]}20`, color: difficultyColors[topic.difficulty] }}>
-          {topic.difficulty}
-        </span>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <span className={styles.diffBadge} style={{ background: `${difficultyColors[topic.difficulty]}20`, color: difficultyColors[topic.difficulty] }}>
+            {topic.difficulty}
+          </span>
+          {topic.subject && (
+            <span className={styles.diffBadge} style={{ background: 'rgba(37,99,235,0.1)', color: '#2563eb' }}>
+              {topic.subject}
+            </span>
+          )}
+        </div>
       </div>
       <h3 className={styles.topicName}>{topic.name}</h3>
       <p className={styles.topicDesc}>{topic.description}</p>
