@@ -12,6 +12,7 @@ interface OverviewTabProps {
     examsCount: number;
     avgScore: number;
     passRate: number;
+    subjectsCount: number;
   };
   topics: Topic[];
   difficultyColors: Record<string, string>;
@@ -47,6 +48,13 @@ export function OverviewTab({
           infoClassName={styles.statCardInfo} valueClassName={styles.statCardValue}
           labelClassName={styles.statCardLabel}
           iconStyle={{ background: 'rgba(16,185,129,0.1)', color: '#10b981' }}
+        />
+        <StatCard 
+          icon="🏷️" value={stats.subjectsCount} label="Total Subjects"
+          className={styles.statCard} iconClassName={styles.statCardIcon}
+          infoClassName={styles.statCardInfo} valueClassName={styles.statCardValue}
+          labelClassName={styles.statCardLabel}
+          iconStyle={{ background: 'rgba(236,72,153,0.1)', color: '#ec4899' }}
         />
         <StatCard 
           icon="📋" value={stats.examsCount} label="Exams Taken"

@@ -323,6 +323,7 @@ export function useAdminDashboard() {
     // Derived
     stats: {
       topicsCount: topics.length,
+      subjectsCount: Array.from(new Set(topics.map(t => t.subject).filter(Boolean))).length,
       questionsCount: questions.length,
       studentsCount: users.filter((u) => u.role === 'student').length,
       examsCount: results.length,
