@@ -8,7 +8,7 @@ interface ModalsProps {
   showTopicForm: boolean;
   setShowTopicForm: (show: boolean) => void;
   editingTopic: Topic | null;
-  topicForm: { name: string; description: string; icon: string; difficulty: string };
+  topicForm: { name: string; description: string; icon: string; difficulty: string; subject: string };
   setTopicForm: (form: any) => void;
   topicError: string;
   handleTopicSubmit: (e: React.FormEvent) => void;
