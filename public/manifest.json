@@ -1,0 +1,21 @@
+{
+  "name": "OptimaSkill Online Exam Platform",
+  "short_name": "OptimaSkill",
+  "description": "A modern online examination platform for students and administrators.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/next.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/next.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

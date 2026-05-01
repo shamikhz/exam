@@ -28,7 +28,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
-        {/* Prevent flash of unstyled theme */}
+        {/* PWA Tags */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="OptimaSkill" />
+
+        {/* Prevent flash of unstyled theme & Register SW */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -38,6 +45,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                   var theme = stored || (prefersDark ? 'dark' : 'light');
                   document.documentElement.setAttribute('data-theme', theme);
+
+                  // Register Service Worker for PWA
+                  if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', function() {
+                      navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                        console.log('SW registered:', reg.scope);
+                      }).catch(function(err) {
+                        console.log('SW registration failed:', err);
+                      });
+                    });
+                  }
                 } catch(e) {}
               })();
             `,
