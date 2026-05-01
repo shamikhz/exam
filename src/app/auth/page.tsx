@@ -205,7 +205,7 @@ export default function AuthPage() {
         <aside className={styles.brand}>
           <div className={styles.brandInner}>
             <div className={styles.brandTagline}>
-              <span className={styles.brandBadge}>✨ Trusted by 10,000+ learners</span>
+              <span className={styles.brandBadge}>✨ Trusted by 500+ learners</span>
             </div>
             <h1 className={styles.brandTitle}>
               {mode === 'login' ? 'Welcome\nback!' : 'Join the\nlearning\nrevolution.'}
@@ -230,8 +230,7 @@ export default function AuthPage() {
             {/* Stats */}
             <div className={styles.brandStats}>
               {[
-                { v: '10K+', l: 'Students' },
-                { v: '500+', l: 'Topics' },
+                { v: '500+', l: 'Students' },
                 { v: '98%', l: 'Pass Rate' },
               ].map((s) => (
                 <div key={s.l} className={styles.brandStat}>

@@ -15,21 +15,43 @@ const features = [
 ];
 
 const stats = [
-  { value: '10K+', label: 'Students' },
-  { value: '500+', label: 'Topics' },
-  { value: '15K+', label: 'Questions' },
+  { value: '500+', label: 'Students' },
   { value: '98%', label: 'Satisfaction' },
 ];
 
 export default function LandingPage() {
   const { theme, toggleTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setShowInstallBtn(false);
+    }
+  };
 
   return (
     <div className={styles.page}>
@@ -80,6 +102,15 @@ export default function LandingPage() {
 
           {/* Stats */}
           <div className={styles.statsRow}>
+            {showInstallBtn && (
+              <button onClick={handleInstallClick} className={styles.installBtn}>
+                <span className={styles.installIcon}>📲</span>
+                <div className={styles.installText}>
+                  <span className={styles.installTitle}>Install App</span>
+                  <span className={styles.installSub}>On your device</span>
+                </div>
+              </button>
+            )}
             {stats.map((s) => (
               <div key={s.label} className={styles.statItem}>
                 <span className={styles.statValue}>{s.value}</span>

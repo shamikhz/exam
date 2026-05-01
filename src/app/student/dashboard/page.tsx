@@ -180,11 +180,11 @@ export default function StudentDashboard() {
                 iconStyle={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}
               />
               <StatCard
-                icon="📚" value={stats.topicsCount} label="Topics"
+                icon="🔥" value={stats.streakDays} label="Streak Days"
                 className={styles.statCard} iconClassName={styles.statIcon}
                 infoClassName={styles.statInfo} valueClassName={styles.statValue}
                 labelClassName={styles.statLabel}
-                iconStyle={{ background: 'rgba(124,58,237,0.1)', color: '#7c3aed' }}
+                iconStyle={{ background: 'rgba(249,115,22,0.1)', color: '#f97316' }}
               />
             </div>
 

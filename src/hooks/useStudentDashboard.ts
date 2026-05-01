@@ -64,6 +64,30 @@ export function useStudentDashboard(userId: string) {
     ? Math.round(Math.max(...validResults.map((r) => (r.score / r.totalPoints) * 100)))
     : 0;
 
+  // Streak: consecutive calendar days with at least one completed exam
+  const streakDays = (() => {
+    if (myResults.length === 0) return 0;
+    // Collect unique date strings (YYYY-MM-DD) from all results
+    const dateset = new Set(
+      myResults.map(r => r.completedAt.slice(0, 10))
+    );
+    const today = new Date();
+    let streak = 0;
+    // Start from today; if today has no result, try from yesterday
+    const startOffset = dateset.has(today.toISOString().slice(0, 10)) ? 0 : 1;
+    for (let i = startOffset; ; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      if (dateset.has(key)) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  })();
+
   return {
     view,
     setView,
@@ -83,7 +107,7 @@ export function useStudentDashboard(userId: string) {
       totalExams,
       avgPercent,
       bestPercent,
-      topicsCount: topics.length
+      streakDays
     }
   };
 }
