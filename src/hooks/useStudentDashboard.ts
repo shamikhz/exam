@@ -186,7 +186,8 @@ export function useExam(
     setExamQuestions(qs);
     setSelectedAnswers(new Array(qs.length).fill(-1));
     setCurrentQ(0);
-    const totalTime = qs.length * 60;
+    const secsPerQ = topic.difficulty === 'Easy' ? 30 : topic.difficulty === 'Medium' ? 45 : 60;
+    const totalTime = qs.length * secsPerQ;
     durationRef.current = totalTime;
     startTimeRef.current = Date.now();
     setTimeLeft(totalTime);
