@@ -84,6 +84,7 @@ export default function StudentDashboard() {
         description: 'This topic has been removed.',
         icon: '🗑️',
         difficulty: 'Medium',
+        subject: '',
         createdAt: result.completedAt,
         questionCount: qs.length,
       };
