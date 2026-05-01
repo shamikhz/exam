@@ -3,7 +3,7 @@ import Link from 'next/link';
 import styles from '../legal.module.css';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — OptimaSkill',
+  title: 'Term & Condition — OptimaSkill',
   description: 'Read the terms and conditions governing your use of the OptimaSkill platform.',
 };
 
@@ -24,7 +24,7 @@ export default function TermsOfServicePage() {
 
       {/* Hero */}
       <div className={styles.hero}>
-        <h1 className={styles.heroTitle}>Terms of Service</h1>
+        <h1 className={styles.heroTitle}>Term & Condition</h1>
         <p className={styles.heroSubtitle}>
           Please read these terms carefully before using OptimaSkill.
         </p>
@@ -36,7 +36,7 @@ export default function TermsOfServicePage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>1. Acceptance of Terms</h2>
           <p className={styles.sectionText}>
-            By accessing or using OptimaSkill ("the Platform"), you agree to be bound by these Terms of Service. 
+            By accessing or using OptimaSkill ("the Platform"), you agree to be bound by these Term & Condition. 
             If you do not agree to these terms, please do not use the platform. These terms apply to all 
             visitors, students, and administrators.
           </p>
@@ -126,7 +126,7 @@ export default function TermsOfServicePage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>8. Contact</h2>
           <p className={styles.sectionText}>
-            For questions regarding these Terms of Service, please visit our{' '}
+            For questions regarding these Term & Condition, please visit our{' '}
             <Link href="/contact" style={{ color: 'var(--color-accent)', fontWeight: 600 }}>Contact Us</Link>{' '}
             page.
           </p>
@@ -138,7 +138,7 @@ export default function TermsOfServicePage() {
         <div className={styles.footerLinks}>
           <Link href="/about-us">About Us</Link>
           <Link href="/privacy-policy">Privacy Policy</Link>
-          <Link href="/terms-of-service">Terms of Service</Link>
+          <Link href="/terms-of-service">Term & Condition</Link>
           <Link href="/contact">Contact Us</Link>
         </div>
         <p className={styles.footerCopy}>© 2026 OptimaSkill. All rights reserved.</p>

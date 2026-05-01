@@ -99,7 +99,7 @@ export default function AboutUsPage() {
         <div className={styles.footerLinks}>
           <Link href="/about-us">About Us</Link>
           <Link href="/privacy-policy">Privacy Policy</Link>
-          <Link href="/terms-of-service">Terms of Service</Link>
+          <Link href="/terms-of-service">Term & Condition</Link>
           <Link href="/contact">Contact Us</Link>
         </div>
         <p className={styles.footerCopy}>© 2026 OptimaSkill. All rights reserved.</p>

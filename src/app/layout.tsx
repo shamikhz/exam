@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/lib/ThemeProvider';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: {
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="OptimaSkill" />
 
-        {/* Prevent flash of unstyled theme & Register SW */}
+        {/* Theme Initializer (Inline to prevent flash) */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -45,17 +46,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                   var theme = stored || (prefersDark ? 'dark' : 'light');
                   document.documentElement.setAttribute('data-theme', theme);
-
-                  // Register Service Worker for PWA
-                  if ('serviceWorker' in navigator) {
-                    window.addEventListener('load', function() {
-                      navigator.serviceWorker.register('/sw.js').then(function(reg) {
-                        console.log('SW registered:', reg.scope);
-                      }).catch(function(err) {
-                        console.log('SW registration failed:', err);
-                      });
-                    });
-                  }
                 } catch(e) {}
               })();
             `,
@@ -64,6 +54,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ThemeProvider>{children}</ThemeProvider>
+        
+        {/* PWA Service Worker Registration */}
+        <Script id="register-sw" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                  console.log('SW registered:', reg.scope);
+                }).catch(function(err) {
+                  console.log('SW registration failed:', err);
+                });
+              });
+            }
+          `}
+        </Script>
       </body>
     </html>
   );
