@@ -977,10 +977,73 @@
   border-radius: 20px;
   padding: 2rem;
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2.5rem;
+  text-align: left;
+}
+
+.scoreLeft {
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  text-align: center;
+  min-width: 200px;
+}
+
+.scoreRight {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.summaryBox {
+  background: var(--color-dominant);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.summaryTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.summaryText {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.scopeBox {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-border);
+}
+
+.scopeLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.scopeText {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .scoreCircle {
@@ -1008,15 +1071,19 @@
 
 .scoreMeta {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
+  background: var(--color-dominant);
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
 }
 
 .scoreMetaItem {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.3rem;
 }
 
@@ -1195,7 +1262,21 @@
   .main { padding: 1rem; }
   .welcomeTitle { font-size: 1.5rem; }
   .headerRight .logoutBtn { display: none; }
-  .scoreCard { padding: 1.5rem 1rem; }
+  .scoreCard {
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .scoreLeft {
+    min-width: auto;
+  }
+  .scoreMeta {
+    justify-content: center;
+  }
+  .scoreMetaItem {
+    align-items: center;
+  }
   .examView, .reviewView { gap: 1rem; }
   .questionCard { padding: 1.25rem; }
 }

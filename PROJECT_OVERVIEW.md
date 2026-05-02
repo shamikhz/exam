@@ -7,10 +7,10 @@
 ## 🚀 Tech Stack
 
 ### Frontend
-- **Framework**: [Next.js 14+](https://nextjs.org/) (App Router architecture)
-- **Library**: [React](https://reactjs.org/)
+- **Framework**: [Next.js 16+](https://nextjs.org/) (App Router architecture)
+- **Library**: [React 19](https://reactjs.org/)
 - **Language**: [TypeScript](https://www.typescriptlang.org/) for type safety and robust development.
-- **Styling**: **Vanilla CSS with CSS Modules**. The design system follows the **60-30-10 color rule** and features:
+- **Styling**: **Vanilla CSS with CSS Modules** and **Tailwind CSS**. The design system follows the **60-30-10 color rule** and features:
   - Sleek Dark/Light modes.
   - Glassmorphism effects.
   - Dynamic animations and transitions.
@@ -38,6 +38,7 @@
 - **Advanced Dashboard**: High-level stats on platform usage and content density.
 
 ### Platform Extras
+- **Progressive Web App (PWA)**: Fully installable across mobile and desktop devices with service worker integration.
 - **Sequential IDs**: Unlike standard Firebase random IDs, OptimaSkill uses a custom sequential numbering system (e.g., `topic-1`, `student-2`) for better readability.
 - **Production-Ready Security**: Strict Firestore Security Rules to protect user data.
 - **Legal Compliance**: Integrated Privacy Policy, Terms of Service, and Contact modules.

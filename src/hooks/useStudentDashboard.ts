@@ -67,20 +67,37 @@ export function useStudentDashboard(userId: string) {
   // Streak: consecutive calendar days with at least one completed exam
   const streakDays = (() => {
     if (myResults.length === 0) return 0;
-    // Collect unique date strings (YYYY-MM-DD) from all results
+    
+    // Convert all completedAt dates to local YYYY-MM-DD
     const dateset = new Set(
-      myResults.map(r => r.completedAt.slice(0, 10))
+      myResults.map(r => new Date(r.completedAt).toLocaleDateString('en-CA')) // 'en-CA' gives YYYY-MM-DD local time
     );
+    
     const today = new Date();
+    const todayStr = today.toLocaleDateString('en-CA');
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayStr = yesterday.toLocaleDateString('en-CA');
+
     let streak = 0;
-    // Start from today; if today has no result, try from yesterday
-    const startOffset = dateset.has(today.toISOString().slice(0, 10)) ? 0 : 1;
-    for (let i = startOffset; ; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
+    let currentCheckDate = new Date(today);
+
+    if (dateset.has(todayStr)) {
+      // Start from today
+    } else if (dateset.has(yesterdayStr)) {
+      // Start from yesterday
+      currentCheckDate = yesterday;
+    } else {
+      // Missed yesterday and today, streak restarts
+      return 0;
+    }
+
+    while (true) {
+      const key = currentCheckDate.toLocaleDateString('en-CA');
       if (dateset.has(key)) {
         streak++;
+        currentCheckDate.setDate(currentCheckDate.getDate() - 1);
       } else {
         break;
       }

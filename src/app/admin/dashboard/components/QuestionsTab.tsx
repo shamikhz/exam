@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { type Topic, type Question } from '@/lib/storage';
 
 interface QuestionsTabProps {
@@ -24,6 +24,19 @@ export function QuestionsTab({
   onDeleteQuestion,
   styles
 }: QuestionsTabProps) {
+  const [subjectFilter, setSubjectFilter] = useState('all');
+
+  const displayTopics = subjectFilter === 'all'
+    ? topics
+    : topics.filter(t => t.subject === subjectFilter);
+
+  const displayQuestions = subjectFilter === 'all'
+    ? filteredQuestions
+    : filteredQuestions.filter(q => {
+        const topic = topics.find(t => t.id === q.topicId);
+        return topic?.subject === subjectFilter;
+      });
+
   return (
     <div className={styles.tabContent}>
       <div className={styles.tabHeader}>
@@ -32,17 +45,11 @@ export function QuestionsTab({
           <select
             id="topic-subject-filter"
             className={styles.filterSelect}
+            value={subjectFilter}
             onChange={(e) => {
-              const subject = e.target.value;
-              if (subject === 'all') {
-                setSelectedTopicFilter('all');
-              } else {
-                // Find first topic in this subject and select it? 
-                // Or just filter the topics dropdown?
-                setSelectedTopicFilter('all');
-              }
+              setSubjectFilter(e.target.value);
+              setSelectedTopicFilter('all');
             }}
-            defaultValue="all"
           >
             <option value="all">All Subjects</option>
             {Array.from(new Set(topics.map(t => t.subject).filter(Boolean))).sort().map(s => (
@@ -56,7 +63,7 @@ export function QuestionsTab({
             className={styles.filterSelect}
           >
             <option value="all">All Topics</option>
-            {topics.map((t) => (
+            {displayTopics.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.icon && (t.icon.startsWith('data:') || t.icon.startsWith('http')) ? '🖼️' : t.icon} {t.name} {t.subject ? `(${t.subject})` : ''}
               </option>
@@ -69,7 +76,7 @@ export function QuestionsTab({
       </div>
 
       <div className={styles.questionList}>
-        {filteredQuestions.map((q, i) => {
+        {displayQuestions.map((q, i) => {
           const topic = topics.find((t) => t.id === q.topicId);
           return (
             <div key={q.id} className={styles.questionCard}>
@@ -102,7 +109,7 @@ export function QuestionsTab({
             </div>
           );
         })}
-        {filteredQuestions.length === 0 && (
+        {displayQuestions.length === 0 && (
           <div className={styles.emptyState}>
             <div className={styles.emptyIcon}>❓</div>
             <p>No questions yet. Add your first question!</p>
